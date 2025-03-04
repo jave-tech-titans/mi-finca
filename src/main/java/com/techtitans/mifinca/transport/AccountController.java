@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
-import com.techtitans.mifinca.domain.services.AuthService;
+import com.techtitans.mifinca.domain.services.AccountService;
 
 @RestController
 @RequestMapping("/auth")
 public class AccountController {
 
     @Autowired
-    private AuthService service;
+    private AccountService service;
 
     @PostMapping()
     public void registerAccount(@RequestBody RegisterAccountDTO dto){
