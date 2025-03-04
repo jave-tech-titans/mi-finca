@@ -32,6 +32,7 @@ public class ConfirmationEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private UUID token;
+    private byte status;
 
     @OneToOne
     @JoinColumn(name = "account_id")

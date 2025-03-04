@@ -27,4 +27,13 @@ public class ConfirmationService {
         emailService.sendConfirmEmail(account.getEmail(), confirmationToken.toString());
     }
     
+
+    public ConfirmationEntity getConfirmationOfCode(UUID code){
+        var response = repo.findByToken(code);
+        return response.orElse(null);
+    }
+
+    public void deleteConfirmation(UUID confirmationId){
+        repo.deleteById(confirmationId);
+    }
 }

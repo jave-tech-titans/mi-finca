@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres
+    container_name: finca_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: finca_db
+    ports:
+      - "5432:5432"
+
+  adminer:
+    image: adminer
+    container_name: adminer_ui
+    ports:
+      - "8085:8080"
+    depends_on:
+      - db
