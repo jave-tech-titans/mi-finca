@@ -1,11 +1,11 @@
 package com.techtitans.mifinca.domain.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.techtitans.mifinca.domain.dtos.AccessTokenDTO;
 import com.techtitans.mifinca.domain.dtos.LoginDTO;
@@ -13,23 +13,24 @@ import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
 import com.techtitans.mifinca.domain.entities.AccountEntity;
 import com.techtitans.mifinca.domain.entities.ConfirmationEntity;
 import com.techtitans.mifinca.repository.AccountRepository;
+import com.techtitans.mifinca.utils.Helpers;
 
-@Component
+@Service
 public class AccountService {
     
     @Autowired
     private AccountRepository repo;
-    @Autowired
-    private ModelMapper modelMapper;
+    //@Autowired
+    //private ModelMapper modelMapper;
     @Autowired
     private ConfirmationService confirmationService;
     @Autowired
     private CryptService cryptService;
+        
 
     public void registerAccount(RegisterAccountDTO dto){
         //fields validation
-        if(dto.names() == null || dto.lastNames() == null || dto.email() == null || dto.password() == null ||
-            dto.names().isEmpty() || dto.lastNames().isEmpty() || dto.email().isEmpty() || dto.password().isEmpty()){
+        if(!Helpers.validateStrings(List.of(dto.names(), dto.lastNames(), dto.email(), dto.password()))){
             throw new RuntimeException("EMPTY_FIELDS");
         }
         if(dto.password().length() < 8){
@@ -91,8 +92,12 @@ public class AccountService {
         return new AccessTokenDTO(createAccessToken(acc));
     }
 
-    private String createAccessToken(AccountEntity accountId){
-        ///to implemente in the futureee
+    private String createAccessToken(AccountEntity account){
         return "token xd";
+    }
+
+
+    public UUID getRandomUserUUID(){
+        return repo.findAll().get(0).getId();
     }
 }

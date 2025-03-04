@@ -1,8 +1,8 @@
 package com.techtitans.mifinca.domain.services;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class EmailService {
 
     public void sendConfirmEmail(String email, String token){

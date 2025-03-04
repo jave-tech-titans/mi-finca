@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.techtitans.mifinca.domain.entities.AccountEntity;
 import com.techtitans.mifinca.domain.entities.ConfirmationEntity;
 import com.techtitans.mifinca.repository.ConfirmationRepository;
 
-@Component
+@Service
 public class ConfirmationService {
 
     @Autowired

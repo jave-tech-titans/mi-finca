@@ -1,11 +1,11 @@
 package com.techtitans.mifinca.domain.services;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 
-@Component
+@Service
 public class CryptService {
 
     private static String key;

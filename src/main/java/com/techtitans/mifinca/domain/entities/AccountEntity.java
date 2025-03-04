@@ -26,7 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE accounts SET status = 1 WHERE id=?")
 @SQLRestriction("status = 0")
-@Table(name = "accounts")   //we add the unqiue constraint at db layer just in case, howeber I'll keep it in service also
+@Table(name = "accounts")  
 public class AccountEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -49,6 +49,12 @@ public class AccountEntity {
         acc.setLastNames(dto.lastNames());
         acc.setEmail(dto.email());
         acc.setNumber(dto.number());
+        return acc;
+    }
+
+    public static AccountEntity fromId(UUID id){
+        var acc = new AccountEntity();
+        acc.setId(id);
         return acc;
     }
 }
