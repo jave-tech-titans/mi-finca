@@ -1,7 +1,5 @@
 package com.techtitans.mifinca.transport;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,12 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.techtitans.mifinca.domain.dtos.AccessTokenDTO;
 import com.techtitans.mifinca.domain.dtos.ConfirmAccountDTO;
+import com.techtitans.mifinca.domain.dtos.LoginDTO;
 import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
 import com.techtitans.mifinca.domain.services.AccountService;
 
 @RestController
 @RequestMapping("/auth")
-public class AccountController {
+public class AuthController {
 
     @Autowired
     private AccountService service;
@@ -29,5 +28,10 @@ public class AccountController {
     public AccessTokenDTO registerAccount(@RequestBody ConfirmAccountDTO body){
         return service.confirmAccount(body.code());
     }  
+
+   @PostMapping("/login")
+   public AccessTokenDTO login(@RequestBody LoginDTO body){
+    return service.login(body);
+   } 
     
 }

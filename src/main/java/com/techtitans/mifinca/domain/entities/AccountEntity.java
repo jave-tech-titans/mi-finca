@@ -35,9 +35,9 @@ public class AccountEntity {
     private String lastNames;
     @Column(unique = true)
     private String email;
-    private String password;
+    private String hash;
     private String number;
-    private boolean active;
+    private boolean isActive;
     private byte status;
 
     private LocalDateTime createdAt;
@@ -48,7 +48,6 @@ public class AccountEntity {
         acc.setNames(dto.names());
         acc.setLastNames(dto.lastNames());
         acc.setEmail(dto.email());
-        acc.setPassword(dto.password());
         acc.setNumber(dto.number());
         return acc;
     }

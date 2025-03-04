@@ -1,16 +1,14 @@
 package com.techtitans.mifinca.domain.services;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
-
-import javax.management.RuntimeErrorException;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.techtitans.mifinca.domain.dtos.AccessTokenDTO;
+import com.techtitans.mifinca.domain.dtos.LoginDTO;
 import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
 import com.techtitans.mifinca.domain.entities.AccountEntity;
 import com.techtitans.mifinca.domain.entities.ConfirmationEntity;
@@ -25,6 +23,8 @@ public class AccountService {
     private ModelMapper modelMapper;
     @Autowired
     private ConfirmationService confirmationService;
+    @Autowired
+    private CryptService cryptService;
 
     public void registerAccount(RegisterAccountDTO dto){
         //fields validation
@@ -52,6 +52,8 @@ public class AccountService {
         account.setActive(false);
         account.setCreatedAt(LocalDateTime.now());
         account.setUpdatedAt(LocalDateTime.now());
+        //storign the password but encrypted
+        account.setHash(cryptService.encryptAES(dto.password()));
         account = repo.save(account);
         confirmationService.notifyConfirmation(account);
     }
@@ -64,8 +66,7 @@ public class AccountService {
             throw new RuntimeException("NON_EXISTING_PENDING_ACCOUNT");
         }
 
-        Optional<AccountEntity> accountRes = repo.findById(conf.getAccount().getId());
-        AccountEntity account = accountRes.orElseGet(null);
+        AccountEntity account  = repo.findById(conf.getAccount().getId()).orElseGet(null);
         if(account== null){
             throw new RuntimeException("NON_EXISTING_PENDING_ACCOUNT");
         }
@@ -75,11 +76,23 @@ public class AccountService {
         account.setUpdatedAt(LocalDateTime.now());
         confirmationService.deleteConfirmation(conf.getId());
         
-        return new AccessTokenDTO(createAccessToken(account.getId()));
+        return new AccessTokenDTO(createAccessToken(account));
     }
 
-    private String createAccessToken(UUID accountId){
+    public AccessTokenDTO login(LoginDTO dto){
+        AccountEntity acc = repo.findByEmail(dto.email()).orElseGet(null);
+        if(acc == null || !acc.isActive()){
+            throw new RuntimeException("NON_EXISTING_OR_ACTIVE_ACCOUNT");
+        }
+        String correctPassword = cryptService.decrypt(acc.getHash());
+        if(!correctPassword.equals(dto.password())){
+            throw new RuntimeException("INCORRECT_PASSWORD");
+        }
+        return new AccessTokenDTO(createAccessToken(acc));
+    }
+
+    private String createAccessToken(AccountEntity accountId){
         ///to implemente in the futureee
-        return "";
+        return "token xd";
     }
 }
