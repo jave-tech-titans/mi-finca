@@ -52,7 +52,7 @@ public class PropertyEntity {
             var prop = new PropertyEntity();
             prop.setName(dto.name());
             prop.setDepartment(dto.department());
-            prop.setEnterType(dto.enterType());
+            prop.setEnterType(dto.municipality());
             prop.setDescription(dto.description());
             prop.setNumberRooms(dto.numberRooms());
             prop.setNumberBathrooms(dto.numberBathrooms());

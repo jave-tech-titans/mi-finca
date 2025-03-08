@@ -1,6 +1,6 @@
 package com.techtitans.mifinca.domain.dtos;
 
-public record CreatePropertyDTO (
+public record UpdatePropertyDTO (
     String name,
     String department,
     String municipality,

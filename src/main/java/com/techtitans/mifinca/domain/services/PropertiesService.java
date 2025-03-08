@@ -63,7 +63,7 @@ public class PropertiesService {
     }
 
     public void createProperty(CreatePropertyDTO dto, UUID userId){
-        if(!Helpers.validateStrings(List.of(dto.name(), dto.department(), dto.enterType(), dto.description()))){
+        if(!Helpers.validateStrings(List.of(dto.name(), dto.department(), dto.municipality(), dto.description()))){
             throw new RuntimeException("EMPTY_FIELDS");
         }
 
