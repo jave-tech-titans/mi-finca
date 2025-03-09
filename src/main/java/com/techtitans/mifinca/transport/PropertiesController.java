@@ -4,17 +4,25 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
+import com.techtitans.mifinca.domain.dtos.DeactivatePropertyDTO;
+import com.techtitans.mifinca.domain.dtos.PhotoUploadDTO;
+import com.techtitans.mifinca.domain.dtos.PropertySearchDTO;
+import com.techtitans.mifinca.domain.dtos.PropertySearchFilterDTO;
+import com.techtitans.mifinca.domain.dtos.UpdatePropertyDTO;
 import com.techtitans.mifinca.domain.services.AccountService;
 import com.techtitans.mifinca.domain.services.PropertiesService;
 
 @RestController
-@RequestMapping("/properties")
+@RequestMapping("/api/v1/properties")
 public class PropertiesController {
     
     @Autowired 
@@ -22,8 +30,10 @@ public class PropertiesController {
 
     //temporary, IS TEMPORARY WHILE WE implement Access Tokens
     @Autowired
-    private AccountService usService;   
+    private AccountService accountService;   
 
+
+    /* 
     @GetMapping("/departments")
     public List<String> getDepartments(){
         return service.retrieveDepartments();
@@ -35,6 +45,37 @@ public class PropertiesController {
         var userId = usService.getRandomUserUUID();
         service.createProperty(body, userId);
     } 
+*/
+@GetMapping
+    public List<?> getProperties(@RequestBody PropertySearchDTO body) {
+        return service.searchProperties(body);
+    }
 
+    @PostMapping
+    public void createProperty(@RequestBody CreatePropertyDTO body) {
+        var userId = accountService.getRandomUserUUID();
+        service.createProperty(body, userId);
+    }
+
+    @PutMapping("/{property_id}")
+    public void updateProperty(@PathVariable Long property_id, @RequestBody UpdatePropertyDTO body) {
+        service.updateProperty(property_id, body);
+    }
+
+    @PostMapping("/{property_id}/photos")
+    public void uploadPhoto(@PathVariable Long property_id, @RequestBody PhotoUploadDTO body) {
+        service.uploadPhoto(property_id, body);
+    }
+
+    @PatchMapping("/{property_id}/deactivate")
+    public void deactivateProperty(@PathVariable Long property_id, @RequestBody DeactivatePropertyDTO body) {
+        service.deactivateProperty(property_id, body);
+    }
+
+    // Nuevo método para el Endpoint 16
+    @GetMapping("/search")
+    public List<?> searchProperties(@RequestBody PropertySearchFilterDTO body) {
+        return service.searchPropertiesByFilter(body);
+    }
 
 }
