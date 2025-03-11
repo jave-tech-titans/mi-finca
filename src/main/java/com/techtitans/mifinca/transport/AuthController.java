@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.techtitans.mifinca.domain.dtos.AccessTokenDTO;
-import com.techtitans.mifinca.domain.dtos.AccountActivationDTO;
-import com.techtitans.mifinca.domain.dtos.AccountCreationDTO;
 import com.techtitans.mifinca.domain.dtos.ConfirmAccountDTO;
 import com.techtitans.mifinca.domain.dtos.LoginDTO;
 import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
@@ -22,18 +20,18 @@ public class AuthController {
     private AccountService service;
 
     @PostMapping("/accounts")
-    public void createAccount(@RequestBody AccountCreationDTO body) {
-        AccountService.createAccount(body);
+    public void createAccount(@RequestBody RegisterAccountDTO body) {
+        service.registerAccount(body);
     }
 
     @PostMapping("/accounts/activate")
-    public void activateAccount(@RequestBody AccountActivationDTO body) {
-        AccountService.activateAccount(body);
+    public void activateAccount(@RequestBody ConfirmAccountDTO body) {
+        service.confirmAccount(body);
     }
 
     @PostMapping("/sessions")
     public void login(@RequestBody LoginDTO body) {
-        AccountService.login(body);
+        service.login(body);
     }
     
 }

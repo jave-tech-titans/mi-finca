@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
 import com.techtitans.mifinca.domain.dtos.DeactivatePropertyDTO;
 import com.techtitans.mifinca.domain.dtos.PhotoUploadDTO;
-import com.techtitans.mifinca.domain.dtos.PropertySearchDTO;
 import com.techtitans.mifinca.domain.dtos.PropertySearchFilterDTO;
 import com.techtitans.mifinca.domain.dtos.UpdatePropertyDTO;
 import com.techtitans.mifinca.domain.services.AccountService;
@@ -30,10 +30,8 @@ public class PropertiesController {
 
     //temporary, IS TEMPORARY WHILE WE implement Access Tokens
     @Autowired
-    private AccountService accountService;   
+    private AccountService usService;   
 
-
-    /* 
     @GetMapping("/departments")
     public List<String> getDepartments(){
         return service.retrieveDepartments();
@@ -45,16 +43,21 @@ public class PropertiesController {
         var userId = usService.getRandomUserUUID();
         service.createProperty(body, userId);
     } 
-*/
-@GetMapping
-    public List<?> getProperties(@RequestBody PropertySearchDTO body) {
-        return service.searchProperties(body);
-    }
 
-    @PostMapping
-    public void createProperty(@RequestBody CreatePropertyDTO body) {
-        var userId = accountService.getRandomUserUUID();
-        service.createProperty(body, userId);
+    @GetMapping
+    public List<?> getProperties(
+        @RequestParam String name,
+        @RequestParam String department, 
+        @RequestParam String enterType,
+        @RequestParam int nRooms,
+        @RequestParam int nBathrooms,
+        @RequestParam boolean isPetFriendly,
+        @RequestParam boolean hasPool,
+        @RequestParam boolean hasAsador,
+        @RequestParam double minPrice,
+        @RequestParam double maxPrice
+    ) {
+        return service.searchProperties(body);
     }
 
     @PutMapping("/{property_id}")

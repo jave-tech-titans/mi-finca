@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.techtitans.mifinca.domain.dtos.AccessTokenDTO;
+import com.techtitans.mifinca.domain.dtos.ConfirmAccountDTO;
 import com.techtitans.mifinca.domain.dtos.LoginDTO;
 import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
 import com.techtitans.mifinca.domain.entities.AccountEntity;
@@ -59,7 +60,8 @@ public class AccountService {
         confirmationService.notifyConfirmation(account);
     }
 
-    public AccessTokenDTO confirmAccount(String token){
+    public AccessTokenDTO confirmAccount(ConfirmAccountDTO cont){
+        String token = cont.code();
         UUID codeToken = UUID.fromString(token);
         //we retrieve the confirmation associated with the code
         ConfirmationEntity conf = confirmationService.getConfirmationOfCode(codeToken);
