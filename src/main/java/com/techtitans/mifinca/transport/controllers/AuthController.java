@@ -1,8 +1,10 @@
-package com.techtitans.mifinca.transport;
+package com.techtitans.mifinca.transport.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,19 +21,25 @@ public class AuthController {
     @Autowired
     private AccountService service;
 
+    //FOR BOTH TYPE OF USERS
     @PostMapping("/accounts")
     public void createAccount(@RequestBody RegisterAccountDTO body) {
         service.registerAccount(body);
     }
 
     @PostMapping("/accounts/activate")
-    public void activateAccount(@RequestBody ConfirmAccountDTO body) {
-        service.confirmAccount(body);
+    public AccessTokenDTO activateAccount(@RequestBody ConfirmAccountDTO body) {
+        return service.confirmAccount(body);
     }
 
     @PostMapping("/sessions")
-    public void login(@RequestBody LoginDTO body) {
-        service.login(body);
+    public AccessTokenDTO login(@RequestBody LoginDTO body) {
+        return service.login(body);
+    }
+
+    @PostMapping("/refresh")
+    public AccessTokenDTO refresh(@RequestHeader(HttpHeaders.AUTHORIZATION) final String authHeader){
+        return service.refreshToken(authHeader);
     }
     
 }

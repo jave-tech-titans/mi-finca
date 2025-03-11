@@ -1,4 +1,4 @@
-package com.techtitans.mifinca.transport;
+package com.techtitans.mifinca.transport.controllers;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class PropertiesController {
         service.createProperty(body, userId);
     } 
 
-    @GetMapping
+   /*  @GetMapping
     public List<?> getProperties(
         @RequestParam String name,
         @RequestParam String department, 
@@ -79,6 +79,6 @@ public class PropertiesController {
     @GetMapping("/search")
     public List<?> searchProperties(@RequestBody PropertySearchFilterDTO body) {
         return service.searchPropertiesByFilter(body);
-    }
+    }*/
 
 }

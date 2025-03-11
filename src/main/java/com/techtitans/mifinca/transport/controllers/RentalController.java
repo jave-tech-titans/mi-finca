@@ -1,4 +1,4 @@
-package com.techtitans.mifinca.transport;
+package com.techtitans.mifinca.transport.controllers;
 
 import com.techtitans.mifinca.domain.dtos.AcceptRentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.CancelRentalRequestDTO;

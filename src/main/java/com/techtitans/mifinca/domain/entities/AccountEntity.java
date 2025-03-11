@@ -15,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +23,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE accounts SET status = 1 WHERE id=?")
@@ -38,8 +40,12 @@ public class AccountEntity {
     private String hash;
     private String number;
     private boolean isActive;
+    private Role role;
+
+    //for soft deleting
     private byte status;
 
+    //for auditorying
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -49,6 +55,11 @@ public class AccountEntity {
         acc.setLastNames(dto.lastNames());
         acc.setEmail(dto.email());
         acc.setNumber(dto.number());
+        if(dto.role().toLowerCase().trim().equals("LANDLORD")){
+            acc.setRole(Role.LANDLORD);
+        }else{
+            acc.setRole(Role.USER);
+        }
         return acc;
     }
 

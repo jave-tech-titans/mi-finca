@@ -5,5 +5,6 @@ public record RegisterAccountDTO(
     String lastNames,
     String email,
     String password,
-    String number
+    String number,
+    String role
 ){}

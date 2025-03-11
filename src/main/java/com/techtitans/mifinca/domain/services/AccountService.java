@@ -13,8 +13,11 @@ import com.techtitans.mifinca.domain.dtos.LoginDTO;
 import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
 import com.techtitans.mifinca.domain.entities.AccountEntity;
 import com.techtitans.mifinca.domain.entities.ConfirmationEntity;
+import com.techtitans.mifinca.domain.exceptions.ApiError;
+import com.techtitans.mifinca.domain.exceptions.ApiException;
 import com.techtitans.mifinca.repository.AccountRepository;
 import com.techtitans.mifinca.utils.Helpers;
+
 
 @Service
 public class AccountService {
@@ -32,20 +35,20 @@ public class AccountService {
     public void registerAccount(RegisterAccountDTO dto){
         //fields validation
         if(!Helpers.validateStrings(List.of(dto.names(), dto.lastNames(), dto.email(), dto.password()))){
-            throw new RuntimeException("EMPTY_FIELDS");
+            throw new ApiException(ApiError.EMPTY_FIELDS);
         }
         if(dto.password().length() < 8){
-            throw new RuntimeException("PASSWORD_TO_SHORT");
+            throw new ApiException(ApiError.PASSWORD_TO_SHORT);
         }
         if(!dto.email().contains("@")){
-            throw new RuntimeException("INVALID_EMAIL");
+            throw new ApiException(ApiError.INVALID_EMAIL);
         }
         var emailItems = dto.email().split("@");
         if(!emailItems[1].contains(".")){
-            throw new RuntimeException("INVALID_EMAIL");
+            throw new ApiException(ApiError.INVALID_EMAIL);
         }
         if(repo.findByEmail(dto.email()).orElse(null) != null){
-            throw new RuntimeException("EMAIL_ALREADY_IN_USE");
+            throw new ApiException(ApiError.EMAIL_ALREADY_TAKEN);
         }
         //we create the entity, and then we save it (WITH ACTIVE FIELD FALSE BECAUSE IT HASNT BEEN ACTIVATED)
         //model mapper didnt work, so for now lets implement a factory method
@@ -60,18 +63,19 @@ public class AccountService {
         confirmationService.notifyConfirmation(account);
     }
 
+
     public AccessTokenDTO confirmAccount(ConfirmAccountDTO cont){
         String token = cont.code();
         UUID codeToken = UUID.fromString(token);
         //we retrieve the confirmation associated with the code
         ConfirmationEntity conf = confirmationService.getConfirmationOfCode(codeToken);
         if(conf == null){
-            throw new RuntimeException("NON_EXISTING_PENDING_ACCOUNT");
+            throw new ApiException(ApiError.NON_EXISTING_ACCOUNT);
         }
 
         AccountEntity account  = repo.findById(conf.getAccount().getId()).orElseGet(null);
         if(account== null){
-            throw new RuntimeException("NON_EXISTING_PENDING_ACCOUNT");
+            throw new ApiException(ApiError.NON_EXISTING_ACCOUNT);
         }
         
         //if confirmation did exist, then update, delete confirmation, and create accesstoken
@@ -79,19 +83,19 @@ public class AccountService {
         account.setUpdatedAt(LocalDateTime.now());
         confirmationService.deleteConfirmation(conf.getId());
         
-        return new AccessTokenDTO(createAccessToken(account));
+        return new AccessTokenDTO(createAccessToken(account), "");
     }
 
     public AccessTokenDTO login(LoginDTO dto){
         AccountEntity acc = repo.findByEmail(dto.email()).orElseGet(null);
         if(acc == null || !acc.isActive()){
-            throw new RuntimeException("NON_EXISTING_OR_ACTIVE_ACCOUNT");
+            throw new ApiException(ApiError.NON_EXISTING_ACCOUNT);
         }
         String correctPassword = cryptService.decrypt(acc.getHash());
         if(!correctPassword.equals(dto.password())){
-            throw new RuntimeException("INCORRECT_PASSWORD");
+            throw new ApiException(ApiError.INCORRECT_PASSWORD);
         }
-        return new AccessTokenDTO(createAccessToken(acc));
+        return new AccessTokenDTO(createAccessToken(acc), "");
     }
 
     private String createAccessToken(AccountEntity account){
@@ -101,5 +105,9 @@ public class AccountService {
 
     public UUID getRandomUserUUID(){
         return repo.findAll().get(0).getId();
+    }
+
+    public AccessTokenDTO refreshToken(String header){
+        return new AccessTokenDTO("", "");
     }
 }
