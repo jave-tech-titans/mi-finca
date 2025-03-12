@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.springframework.cglib.core.Local;
 
 import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
 

@@ -26,6 +26,7 @@ public class ErrorsMiddleware {
         errorCodesMapping.put(ErrorType.BAD_INPUT, HttpStatus.BAD_REQUEST);
         errorCodesMapping.put(ErrorType.UNATHORIZED, HttpStatus.UNAUTHORIZED);
         errorCodesMapping.put(ErrorType.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+        errorCodesMapping.put(ErrorType.NOT_FOUND, HttpStatus.NOT_FOUND);
     }
     //catches all exceptions thrown
     @ExceptionHandler(RuntimeException.class)

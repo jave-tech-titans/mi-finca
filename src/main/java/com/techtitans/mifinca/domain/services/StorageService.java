@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import com.techtitans.mifinca.domain.entities.FileEntity;
@@ -33,6 +35,14 @@ public class StorageService {
             .url(path)
             .build()
         );
+    }
+
+     public Resource getFile(String relativePath) throws Exception {
+        Path filePath = Paths.get(MAIN_DIRECTORY).resolve(relativePath).normalize();
+        if (!Files.exists(filePath)) {
+            throw new ApiException(ApiError.FILE_NOT_FOUND);
+        }
+        return new UrlResource(filePath.toUri());
     }
 
     private void writeFile(String path, InputStream file){
