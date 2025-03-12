@@ -1,18 +1,18 @@
 package com.techtitans.mifinca.transport.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.techtitans.mifinca.domain.dtos.AccessTokenDTO;
 import com.techtitans.mifinca.domain.dtos.ConfirmAccountDTO;
 import com.techtitans.mifinca.domain.dtos.LoginDTO;
+import com.techtitans.mifinca.domain.dtos.RefreshTokenDTO;
 import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
 import com.techtitans.mifinca.domain.services.AccountService;
+import com.techtitans.mifinca.domain.services.AuthService;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -20,6 +20,8 @@ public class AuthController {
 
     @Autowired
     private AccountService service;
+
+    @Autowired AuthService authService;
 
     //FOR BOTH TYPE OF USERS
     @PostMapping("/accounts")
@@ -38,8 +40,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public AccessTokenDTO refresh(@RequestHeader(HttpHeaders.AUTHORIZATION) final String authHeader){
-        return service.refreshToken(authHeader);
+    public AccessTokenDTO refresh(@RequestBody RefreshTokenDTO body){
+        return authService.refreshAccessToken(body.refreshToken());
     }
     
 }

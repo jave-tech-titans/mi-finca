@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
 import com.techtitans.mifinca.domain.dtos.DeactivatePropertyDTO;
 import com.techtitans.mifinca.domain.dtos.PhotoUploadDTO;
@@ -28,9 +30,6 @@ public class PropertiesController {
     @Autowired 
     private PropertiesService service;
 
-    //temporary, IS TEMPORARY WHILE WE implement Access Tokens
-    @Autowired
-    private AccountService usService;   
 
     @GetMapping("/departments")
     public List<String> getDepartments(){
@@ -38,10 +37,9 @@ public class PropertiesController {
     } 
 
     @PostMapping
-    public void postProperty(@RequestBody CreatePropertyDTO body){
+    public void postProperty(@RequestBody CreatePropertyDTO body, @RequestAttribute("auth") AuthDTO authDTO){
         //only termporary 
-        var userId = usService.getRandomUserUUID();
-        service.createProperty(body, userId);
+       // service.createProperty(body, userId);
     } 
 
    /*  @GetMapping

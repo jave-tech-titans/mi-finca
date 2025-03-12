@@ -24,14 +24,15 @@ public class AccountService {
     
     @Autowired
     private AccountRepository repo;
-    //@Autowired
-    //private ModelMapper modelMapper;
     @Autowired
     private ConfirmationService confirmationService;
     @Autowired
     private CryptService cryptService;
+    @Autowired
+    private AuthService authService;
         
 
+    //method which registers the new account, account creation
     public void registerAccount(RegisterAccountDTO dto){
         //fields validation
         if(!Helpers.validateStrings(List.of(dto.names(), dto.lastNames(), dto.email(), dto.password()))){
@@ -64,6 +65,8 @@ public class AccountService {
     }
 
 
+    //method used when the user has received the confirmation button, that button will
+    //make a call to the endpoint with a unique code token, with that the account is confirmed
     public AccessTokenDTO confirmAccount(ConfirmAccountDTO cont){
         String token = cont.code();
         UUID codeToken = UUID.fromString(token);
@@ -82,10 +85,13 @@ public class AccountService {
         account.setActive(true);
         account.setUpdatedAt(LocalDateTime.now());
         confirmationService.deleteConfirmation(conf.getId());
-        
-        return new AccessTokenDTO(createAccessToken(account), "");
+
+        //create access and refresh tokens, with auth service
+        return authService.createSession(account);
     }
 
+
+    //method for the user to login into the account
     public AccessTokenDTO login(LoginDTO dto){
         AccountEntity acc = repo.findByEmail(dto.email()).orElseGet(null);
         if(acc == null || !acc.isActive()){
@@ -95,19 +101,8 @@ public class AccountService {
         if(!correctPassword.equals(dto.password())){
             throw new ApiException(ApiError.INCORRECT_PASSWORD);
         }
-        return new AccessTokenDTO(createAccessToken(acc), "");
+        //if credentials were correct, then we create the session
+        return authService.createSession(acc);
     }
 
-    private String createAccessToken(AccountEntity account){
-        return "token xd";
-    }
-
-
-    public UUID getRandomUserUUID(){
-        return repo.findAll().get(0).getId();
-    }
-
-    public AccessTokenDTO refreshToken(String header){
-        return new AccessTokenDTO("", "");
-    }
 }
