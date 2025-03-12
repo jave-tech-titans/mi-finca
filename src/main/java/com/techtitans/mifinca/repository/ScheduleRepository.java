@@ -24,4 +24,17 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, UUID>{
         @Param("year") Integer year,
         @Param("limit") Integer limit
     );
+
+
+    @Query(value = """
+        SELECT * FROM schedules 
+        WHERE user_id = :userId
+        ORDER BY updated_at DESC
+        LIMIT :limit OFFSET :offset
+        """, nativeQuery = true)
+    List<ScheduleEntity> findRequestsByUserId(
+        @Param("userId") UUID userId, 
+        @Param("limit") Integer limit,
+        @Param("offset") Integer offset
+    );
 }

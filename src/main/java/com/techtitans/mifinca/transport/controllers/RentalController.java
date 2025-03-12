@@ -4,7 +4,7 @@ import com.techtitans.mifinca.domain.dtos.AcceptRentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.dtos.CancelRentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.CreateRentalRequestDTO;
-import com.techtitans.mifinca.domain.dtos.RentalRequestFilterDTO;
+import com.techtitans.mifinca.domain.dtos.RentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.RentalRequestTenantFilterDTO;
 import com.techtitans.mifinca.domain.dtos.ScheduleDTO;
 import com.techtitans.mifinca.domain.filters.SchedulesSearchFilter;
@@ -31,9 +31,12 @@ public class RentalController {
         return rentalService.getPropertySchedules(propertyId, new SchedulesSearchFilter(month, year));
     }
 
-    @GetMapping
-    public List<?> getRentalRequests(@RequestBody RentalRequestFilterDTO body) {
-        return rentalService.getRentalRequests(body);
+    @GetMapping("/requests")
+    public List<RentalRequestDTO> getRentalRequests(
+        @RequestParam(defaultValue = "1") Integer page,
+        @RequestAttribute("auth") AuthDTO authDTO
+    ) {
+        return rentalService.getRentalRequests(page, authDTO);
     }
 
     @PatchMapping("/{request_id}/accept")

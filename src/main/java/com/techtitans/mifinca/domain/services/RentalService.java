@@ -4,7 +4,7 @@ import com.techtitans.mifinca.domain.dtos.AcceptRentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.dtos.CancelRentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.CreateRentalRequestDTO;
-import com.techtitans.mifinca.domain.dtos.RentalRequestFilterDTO;
+import com.techtitans.mifinca.domain.dtos.RentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.RentalRequestTenantFilterDTO;
 import com.techtitans.mifinca.domain.dtos.ScheduleDTO;
 import com.techtitans.mifinca.domain.entities.AccountEntity;
@@ -46,8 +46,19 @@ public class RentalService {
         return schedulesDTOS;
     }
 
-    public List<?> getRentalRequests(RentalRequestFilterDTO body) {
-        return List.of(); // Temporal
+    public List<RentalRequestDTO> getRentalRequests(Integer page, AuthDTO authDTO) {
+        int limit = 10;
+        int offset = page*limit - limit;
+        List<ScheduleEntity> schedules= repo.findRequestsByUserId(authDTO.userId(), limit, offset);
+
+        List<RentalRequestDTO> dtos = new ArrayList<>();
+        for(ScheduleEntity ent : schedules){
+            dtos.add(new RentalRequestDTO(
+                ent.getId(), ent.getProperty().getId(), ent.getProperty().getName(), 
+                ent.getStartDate(), ent.getEndDate(), ent.getScStatus(), ent.getCreatedAt()
+            ));
+        }
+        return dtos;
     }
 
     public void acceptRequest(Long request_id, AcceptRentalRequestDTO body) {
