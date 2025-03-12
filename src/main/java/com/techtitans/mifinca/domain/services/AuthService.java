@@ -26,8 +26,11 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class AuthService {
-    @Value("${security.jwt.secret-key}")
-    private String secretKey;
+    private static String secretKey;
+
+    public static void setSecret(String secret){
+        secretKey = secret;
+    }
 
     @Value("${security.jwt.expiration}")
     private long jwtExpiration;
