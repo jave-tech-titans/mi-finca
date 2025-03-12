@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class StorageService {
 
     @Autowired
     private FileRepository repo;
+
+    @Value("${general.domain}")
+    private String domain;
 
     private static final String MAIN_DIRECTORY = "files"; 
 
@@ -57,6 +61,10 @@ public class StorageService {
         } catch (Exception e) {
             throw new ApiException(ApiError.UNABLE_TO_STORE_IMAGE);
         }
+    }
+
+    public String getUrl(FileEntity file){
+        return domain + "/files/" + file.getUrl();
     }
     
 }

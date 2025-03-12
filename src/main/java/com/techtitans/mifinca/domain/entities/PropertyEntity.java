@@ -51,7 +51,7 @@ public class PropertyEntity {
 
     @ManyToOne
     @JoinColumn(name = "account_id") 
-    private AccountEntity user;
+    private AccountEntity owner;
 
     private byte status;
 

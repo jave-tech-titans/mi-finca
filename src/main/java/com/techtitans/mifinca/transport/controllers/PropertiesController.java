@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +21,9 @@ import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
 import com.techtitans.mifinca.domain.dtos.DeactivatePropertyDTO;
 import com.techtitans.mifinca.domain.dtos.PropertySearchFilterDTO;
+import com.techtitans.mifinca.domain.dtos.PropertyTileDTO;
 import com.techtitans.mifinca.domain.dtos.UpdatePropertyDTO;
+import com.techtitans.mifinca.domain.filters.PropertySearchFilter;
 import com.techtitans.mifinca.domain.services.AccountService;
 import com.techtitans.mifinca.domain.services.PropertiesService;
 
@@ -43,23 +46,42 @@ public class PropertiesController {
     } 
 
 
-   /*  @GetMapping
-    public List<?> getProperties(
-        @RequestParam String name,
-        @RequestParam String department, 
-        @RequestParam String enterType,
-        @RequestParam int nRooms,
-        @RequestParam int nBathrooms,
-        @RequestParam boolean isPetFriendly,
-        @RequestParam boolean hasPool,
-        @RequestParam boolean hasAsador,
-        @RequestParam double minPrice,
-        @RequestParam double maxPrice
-    ) {
-        return service.searchProperties(body);
+    @GetMapping("/mine")
+    public List<PropertyTileDTO> getMyProperties(
+        @RequestAttribute("auth") AuthDTO auth,
+        @RequestParam(defaultValue = "1") int page
+    ){
+        return service.getProperties(PropertySearchFilter
+            .builder()
+            .ownerId(auth.userId())
+            .page(page)
+            .build()
+        );
     }
 
-    @PutMapping("/{property_id}")
+    @GetMapping
+    public List<PropertyTileDTO> getProperties(
+        @RequestParam(required =false) String name,
+        @RequestParam(required =false) String department, 
+        @RequestParam(required =false) Integer nRooms,
+        @RequestParam(required =false) Integer nPeople,
+        @RequestParam(required =false) Double minPrice,
+        @RequestParam(required =false) Double maxPrice,
+        @RequestParam(defaultValue = "1") int page
+    ) {
+        return service.getProperties(PropertySearchFilter
+            .builder()
+            .nameText(name)
+            .department(department)
+            .nRooms(nRooms)
+            .nPeople(nPeople)
+            .minPrice(minPrice)
+            .maxPrice(maxPrice)
+            .page(page).build()
+        );
+    }
+
+    /*@PutMapping("/{property_id}")
     public void updateProperty(@PathVariable Long property_id, @RequestBody UpdatePropertyDTO body) {
         service.updateProperty(property_id, body);
     }*/
