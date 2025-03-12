@@ -40,7 +40,7 @@ public class AccountEntity {
     private String hash;
     private String number;
     private boolean isActive;
-    private Role role;
+    private String role;
 
     //for soft deleting
     private byte status;
@@ -55,11 +55,6 @@ public class AccountEntity {
         acc.setLastNames(dto.lastNames());
         acc.setEmail(dto.email());
         acc.setNumber(dto.number());
-        if(dto.role().toLowerCase().trim().equals("LANDLORD")){
-            acc.setRole(Role.LANDLORD);
-        }else{
-            acc.setRole(Role.USER);
-        }
         return acc;
     }
 

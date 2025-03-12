@@ -3,8 +3,6 @@ package com.techtitans.mifinca.domain.entities;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,29 +18,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity 
-@Getter
-@Setter 
 @Builder
+@Getter 
+@Setter 
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE sessions SET status 1 WHRE id=?")
-@SQLRestriction("status = 0")
-@Table(name = "sessions")
-public class SessionEntity {
-
-    @Id 
+@Table(name="files")
+public class FileEntity {
+    
+    @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private UUID token;
-    private LocalDateTime expiresAt;
-
-    @ManyToOne 
-    @JoinColumn(name = "account_id") 
-    private AccountEntity user;
+    private String url;
+    @ManyToOne
+    @JoinColumn(name="property_id")
+    private PropertyEntity property;
 
     //for auditoring
     private LocalDateTime createdAt;
-
-    private byte status;
-    
 }

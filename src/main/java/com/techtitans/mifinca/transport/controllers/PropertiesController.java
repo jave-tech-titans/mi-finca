@@ -1,6 +1,7 @@
 package com.techtitans.mifinca.transport.controllers;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
 import com.techtitans.mifinca.domain.dtos.DeactivatePropertyDTO;
-import com.techtitans.mifinca.domain.dtos.PhotoUploadDTO;
 import com.techtitans.mifinca.domain.dtos.PropertySearchFilterDTO;
 import com.techtitans.mifinca.domain.dtos.UpdatePropertyDTO;
 import com.techtitans.mifinca.domain.services.AccountService;
@@ -38,9 +39,9 @@ public class PropertiesController {
 
     @PostMapping
     public void postProperty(@RequestBody CreatePropertyDTO body, @RequestAttribute("auth") AuthDTO authDTO){
-        //only termporary 
-       // service.createProperty(body, userId);
+        service.createProperty(body, authDTO);
     } 
+
 
    /*  @GetMapping
     public List<?> getProperties(
@@ -61,14 +62,20 @@ public class PropertiesController {
     @PutMapping("/{property_id}")
     public void updateProperty(@PathVariable Long property_id, @RequestBody UpdatePropertyDTO body) {
         service.updateProperty(property_id, body);
+    }*/
+
+    @PostMapping("/{propertyId}/pictures")
+    public void uploadPicture(
+        @PathVariable UUID propertyId, 
+        @RequestParam("picture") MultipartFile picture, 
+        @RequestAttribute("auth") AuthDTO authDTO
+    ) throws Exception{
+        String picName = picture.getOriginalFilename();
+        var fileStream = picture.getInputStream();
+        service.uploadPicture(propertyId, picName, fileStream, authDTO);
     }
 
-    @PostMapping("/{property_id}/photos")
-    public void uploadPhoto(@PathVariable Long property_id, @RequestBody PhotoUploadDTO body) {
-        service.uploadPhoto(property_id, body);
-    }
-
-    @PatchMapping("/{property_id}/deactivate")
+   /*  @PatchMapping("/{property_id}/deactivate")
     public void deactivateProperty(@PathVariable Long property_id, @RequestBody DeactivatePropertyDTO body) {
         service.deactivateProperty(property_id, body);
     }

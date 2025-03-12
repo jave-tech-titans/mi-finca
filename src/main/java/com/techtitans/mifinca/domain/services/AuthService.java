@@ -9,11 +9,11 @@ import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.techtitans.mifinca.domain.dtos.AccessTokenDTO;
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.entities.AccountEntity;
-import com.techtitans.mifinca.domain.entities.Role;
 import com.techtitans.mifinca.domain.entities.SessionEntity;
 import com.techtitans.mifinca.domain.exceptions.ApiError;
 import com.techtitans.mifinca.domain.exceptions.ApiException;
@@ -23,8 +23,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.security.auth.message.AuthException;
 
+@Service
 public class AuthService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
@@ -53,18 +53,22 @@ public class AuthService {
     }
 
     public AuthDTO extractJWTPayload(String token){
-        final Claims jwtToken = Jwts.parser()
-            .verifyWith(getKey())
-            .build()
-            .parseSignedClaims(token)
-            .getPayload();
-        
-        var userId = UUID.fromString(jwtToken.getId());
-        Role role = (Role) jwtToken.get("ROLE");
-        if(jwtToken.getExpiration().before(new Date(System.currentTimeMillis()))){
-            throw new ApiException(ApiError.EXPIRED_TOKEN);
+        try{
+            final Claims jwtToken = Jwts.parser()
+                .verifyWith(getKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+            
+            var userId = UUID.fromString(jwtToken.getId());
+            String role = (String)jwtToken.get("ROLE");
+            if(jwtToken.getExpiration().before(new Date(System.currentTimeMillis()))){
+                throw new ApiException(ApiError.EXPIRED_TOKEN);
+            }
+            return new AuthDTO(userId, role);
+        }catch(Exception e){
+            throw new ApiException(ApiError.INVALID_TOKEN);
         }
-        return new AuthDTO(userId, role);
 
     }
 

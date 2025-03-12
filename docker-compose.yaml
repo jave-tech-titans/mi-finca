@@ -11,7 +11,7 @@ services:
 
   adminer:
     image: adminer
-    container_name: adminer_ui
+    container_name: adminer_finca
     ports:
       - "8085:8080"
     depends_on:

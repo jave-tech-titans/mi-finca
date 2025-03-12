@@ -7,16 +7,20 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import org.springframework.cglib.core.Local;
 
 import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
 
@@ -43,16 +47,25 @@ public class PropertyEntity {
     private boolean hasPool;
     private boolean hasAsador;
     private double nightPrice;
+    @OneToMany(mappedBy = "property")
+    private List<FileEntity> pictures;
+
     @ManyToOne
     @JoinColumn(name = "account_id") 
     private AccountEntity user;
+
+    private byte status;
+
+    //for auditoring
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     //temporary a factory constructor for DTO
     public static PropertyEntity fromCreateDTO(CreatePropertyDTO dto){
             var prop = new PropertyEntity();
             prop.setName(dto.name());
             prop.setDepartment(dto.department());
-            prop.setEnterType(dto.municipality());
+            prop.setEnterType(dto.enterType());
             prop.setDescription(dto.description());
             prop.setNumberRooms(dto.numberRooms());
             prop.setNumberBathrooms(dto.numberBathrooms());

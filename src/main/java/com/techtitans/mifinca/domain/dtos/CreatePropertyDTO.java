@@ -3,8 +3,7 @@ package com.techtitans.mifinca.domain.dtos;
 public record CreatePropertyDTO (
     String name,
     String department,
-    String municipality,
-    String access_type,
+    String enterType,
     String description,
     Integer numberRooms,
     Integer numberBathrooms,

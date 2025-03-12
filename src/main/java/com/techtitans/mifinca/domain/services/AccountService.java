@@ -13,6 +13,7 @@ import com.techtitans.mifinca.domain.dtos.LoginDTO;
 import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
 import com.techtitans.mifinca.domain.entities.AccountEntity;
 import com.techtitans.mifinca.domain.entities.ConfirmationEntity;
+import com.techtitans.mifinca.domain.entities.Roles;
 import com.techtitans.mifinca.domain.exceptions.ApiError;
 import com.techtitans.mifinca.domain.exceptions.ApiException;
 import com.techtitans.mifinca.repository.AccountRepository;
@@ -30,12 +31,18 @@ public class AccountService {
     private CryptService cryptService;
     @Autowired
     private AuthService authService;
-        
+    
+    
 
     //method which registers the new account, account creation
     public void registerAccount(RegisterAccountDTO dto){
         //fields validation
-        if(!Helpers.validateStrings(List.of(dto.names(), dto.lastNames(), dto.email(), dto.password()))){
+        if(!Helpers.validateStrings(List.of(
+            dto.names() == null ? "" :  dto.names(), 
+            dto.lastNames()== null ? "" :  dto.lastNames(), 
+            dto.email()== null ? "" :  dto.email(), 
+            dto.password() == null ? "" :  dto.password()
+        ))){
             throw new ApiException(ApiError.EMPTY_FIELDS);
         }
         if(dto.password().length() < 8){
@@ -55,6 +62,12 @@ public class AccountService {
         //model mapper didnt work, so for now lets implement a factory method
         //AccountEntity account = modelMapper.map(dto, AccountEntity.class);
         AccountEntity account = AccountEntity.fromRegisterDTO(dto);
+        //setting the role depending on what asked
+        if(dto.role().toUpperCase().trim().equals("LANDLORD")){
+            account.setRole(Roles.landlordRole());
+        }else{
+            account.setRole(Roles.userRole());
+        }
         account.setActive(false);
         account.setCreatedAt(LocalDateTime.now());
         account.setUpdatedAt(LocalDateTime.now());

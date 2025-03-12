@@ -17,7 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         //here we suscribe the endpoints with the middleware
         registry.addInterceptor(authMiddleware)
-                .addPathPatterns("/api/v1/properties");
+                .addPathPatterns("/api/v1/properties/**");
             //.excludePathPatterns("/api/public/**");
     }
 }

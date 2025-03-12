@@ -24,7 +24,6 @@ public class AuthMiddleware implements HandlerInterceptor{
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
-
         //extracting the token and then extrating the payload
         String token = authHeader.substring(7);
         AuthDTO authDto = authService.extractJWTPayload(token);
