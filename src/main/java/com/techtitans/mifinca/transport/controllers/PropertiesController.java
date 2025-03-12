@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,12 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
-import com.techtitans.mifinca.domain.dtos.DeactivatePropertyDTO;
-import com.techtitans.mifinca.domain.dtos.PropertySearchFilterDTO;
+import com.techtitans.mifinca.domain.dtos.FullPropertyDTO;
 import com.techtitans.mifinca.domain.dtos.PropertyTileDTO;
 import com.techtitans.mifinca.domain.dtos.UpdatePropertyDTO;
 import com.techtitans.mifinca.domain.filters.PropertySearchFilter;
-import com.techtitans.mifinca.domain.services.AccountService;
 import com.techtitans.mifinca.domain.services.PropertiesService;
 
 @RestController
@@ -44,6 +41,11 @@ public class PropertiesController {
     public void postProperty(@RequestBody CreatePropertyDTO body, @RequestAttribute("auth") AuthDTO authDTO){
         service.createProperty(body, authDTO);
     } 
+
+    @GetMapping("/{property-id}")
+    public FullPropertyDTO getProperty(@PathVariable("property-id") UUID propertyId){
+        return service.getProperty(propertyId);
+    }
 
 
     @GetMapping("/mine")
@@ -81,14 +83,14 @@ public class PropertiesController {
         );
     }
 
-    /*@PutMapping("/{property_id}")
-    public void updateProperty(@PathVariable Long property_id, @RequestBody UpdatePropertyDTO body) {
-        service.updateProperty(property_id, body);
-    }*/
+    @PutMapping("/{property-id}")
+    public void updateProperty(@PathVariable("property-id") UUID propertyId, @RequestBody UpdatePropertyDTO body, @RequestAttribute("auth") AuthDTO authDTO) {
+        service.updateProperty(propertyId, body, authDTO);
+    }
 
-    @PostMapping("/{propertyId}/pictures")
+    @PostMapping("/{property-id}/pictures")
     public void uploadPicture(
-        @PathVariable UUID propertyId, 
+        @PathVariable("property-id") UUID propertyId, 
         @RequestParam("picture") MultipartFile picture, 
         @RequestAttribute("auth") AuthDTO authDTO
     ) throws Exception{
@@ -97,15 +99,8 @@ public class PropertiesController {
         service.uploadPicture(propertyId, picName, fileStream, authDTO);
     }
 
-   /*  @PatchMapping("/{property_id}/deactivate")
-    public void deactivateProperty(@PathVariable Long property_id, @RequestBody DeactivatePropertyDTO body) {
-        service.deactivateProperty(property_id, body);
+    @DeleteMapping("/{property-id}")
+    public void deactivateProperty(@PathVariable("property-id") UUID propertyId, @RequestAttribute("auth") AuthDTO authDTO) {
+        service.deleteProperty(propertyId, authDTO);
     }
-
-    // Nuevo método para el Endpoint 16
-    @GetMapping("/search")
-    public List<?> searchProperties(@RequestBody PropertySearchFilterDTO body) {
-        return service.searchPropertiesByFilter(body);
-    }*/
-
 }

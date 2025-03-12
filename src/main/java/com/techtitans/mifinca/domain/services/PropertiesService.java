@@ -15,7 +15,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -23,7 +22,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
+import com.techtitans.mifinca.domain.dtos.FullPropertyDTO;
 import com.techtitans.mifinca.domain.dtos.PropertyTileDTO;
+import com.techtitans.mifinca.domain.dtos.UpdatePropertyDTO;
 import com.techtitans.mifinca.domain.entities.AccountEntity;
 import com.techtitans.mifinca.domain.entities.PropertyEntity;
 import com.techtitans.mifinca.domain.entities.Roles;
@@ -107,11 +108,8 @@ public class PropertiesService {
 
     //method to add pictures to a property
     public void uploadPicture(UUID propertyId, String picName, InputStream file, AuthDTO auth){
-        PropertyEntity prop = repo.findById(propertyId).orElse(null);
-        //checking if  the user owns the property, if not then F
-        if(!prop.getOwner().getId().equals(auth.userId())){
-            throw new ApiException(ApiError.UNATHORIZED_TO_EDIT_PROPERTY);
-        }
+        PropertyEntity prop = getPropertyById(propertyId, auth);
+
         //if the user was the owner, then upload picture
         Path path = Paths.get("properties", propertyId.toString(), picName);
         storageService.saveFile(prop, path.toString(), file);
@@ -150,6 +148,7 @@ public class PropertiesService {
                 imageUrl = storageService.getUrl(entity.getPictures().get(0));
             }
             var dto = new PropertyTileDTO(
+                entity.getId(),
                 entity.getName(), entity.getDepartment(), 
                 imageUrl, entity.getNumberRooms(), 
                 entity.getNumberRooms()*4,
@@ -158,5 +157,57 @@ public class PropertiesService {
             dtos.add(dto);
         }
         return dtos;
+    }
+
+
+    //for updating the property
+    public void updateProperty(UUID propertyId, UpdatePropertyDTO dto, AuthDTO authDTO){
+        PropertyEntity property = getPropertyById(propertyId, authDTO);
+        //if changed department then validated
+        if(dto.department() != null){
+            if(!getDepartments().contains(dto.department())){
+                throw new ApiException(ApiError.INVALID_DEPARTMENT);
+            }
+        }
+        property.updateWithDTO(dto);
+        property.setUpdatedAt(LocalDateTime.now());
+        repo.save(property);
+    }
+
+
+    //to retrieve full a property
+    public FullPropertyDTO getProperty(UUID propertyId){
+        PropertyEntity prop = repo.findById(propertyId).orElse(null);
+        if(prop == null){
+            throw new ApiException(ApiError.PROPERTY_NOT_FOUND);
+        }
+
+        return new FullPropertyDTO(
+            prop.getId(), prop.getName(), prop.getDepartment(), prop.getDescription(), 
+            prop.getEnterType(), prop.isHasAsador(), prop.isHasPool(), prop.isPetFriendly(), prop.getNumberBathrooms(),
+            prop.getNumberRooms(), prop.getNightPrice(), prop.getOwner().getId()
+        );
+    }
+
+
+    //to delete property
+    public void deleteProperty(UUID propertyId, AuthDTO authDTO){
+        //in this case we dont care about the property, we simply call this in order to verify that the property exists and we are the owner
+        getPropertyById(propertyId, authDTO);
+        repo.deleteById(propertyId);
+        System.out.println("after deleting");
+    }
+
+
+    //private method to retrieve properties, it does the process of checking if the property does exist
+    private PropertyEntity getPropertyById(UUID propertyId, AuthDTO authDTO){
+        PropertyEntity prop = repo.findById(propertyId).orElse(null);
+        if(prop == null){
+            throw new ApiException(ApiError.PROPERTY_NOT_FOUND);
+        }
+        if(!prop.getOwner().getId().equals(authDTO.userId())){
+            throw new ApiException(ApiError.UNATHORIZED_TO_EDIT_PROPERTY);
+        }
+        return prop;
     }
 }

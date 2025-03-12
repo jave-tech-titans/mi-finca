@@ -22,6 +22,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
+import com.techtitans.mifinca.domain.dtos.UpdatePropertyDTO;
 
 
 @Entity
@@ -29,7 +30,7 @@ import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE accounts SET status = 1 WHERE id=?")
+@SQLDelete(sql = "UPDATE properties SET status = 1 WHERE id=?")
 @SQLRestriction("status = 0")
 @Table(name = "properties")  
 public class PropertyEntity {
@@ -73,5 +74,38 @@ public class PropertyEntity {
             prop.setHasAsador(dto.hasAsador());
             prop.setNightPrice(dto.nightPrice());
             return prop;
+    }
+
+    public void updateWithDTO(UpdatePropertyDTO dto){
+        if(dto.name() != null){
+            this.name = dto.name();
+        }
+        if(dto.department() != null){
+            this.department = dto.department();
+        }
+        if(dto.enterType() != null){
+            this.enterType = dto.enterType();
+        }
+        if(dto.description() != null){
+            this.description = dto.description();
+        }
+        if(dto.numberRooms() != null){
+            this.numberRooms = dto.numberRooms();
+        }
+        if(dto.numberBathrooms() != null){
+            this.numberBathrooms = dto.numberBathrooms();
+        }
+        if(dto.isPetFriendly() != null){
+            this.isPetFriendly = dto.isPetFriendly();
+        }
+        if(dto.hasPool() != null){
+            this.hasPool = dto.hasPool();
+        }
+        if(dto.hasAsador() != null){
+            this.hasAsador = dto.hasAsador();
+        }
+        if(dto.nightPrice() != null){
+            this.nightPrice = dto.nightPrice();
+        }
     }
 }
