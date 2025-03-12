@@ -9,5 +9,6 @@ public record PropertyTileDTO (
     String imageUrl,
     int nRooms,
     int nPeople,
-    double price
+    double price,
+    Double rating
 ){}

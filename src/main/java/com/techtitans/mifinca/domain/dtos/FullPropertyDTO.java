@@ -14,5 +14,6 @@ public record FullPropertyDTO (
     int numberBathrooms,
     int numberRooms,
     double nightPrice,
-    UUID ownerId
+    UUID ownerId,
+    Double rating
 ){}

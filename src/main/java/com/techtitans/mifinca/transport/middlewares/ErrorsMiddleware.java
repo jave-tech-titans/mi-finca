@@ -1,5 +1,6 @@
 package com.techtitans.mifinca.transport.middlewares;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ public class ErrorsMiddleware {
         }
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("ERROR", errorMessage);
+        errorResponse.put("TIMESTAMP", LocalDateTime.now());
         return new ResponseEntity<>(errorResponse, status);
     }
     

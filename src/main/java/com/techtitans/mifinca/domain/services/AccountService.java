@@ -64,9 +64,9 @@ public class AccountService {
         AccountEntity account = AccountEntity.fromRegisterDTO(dto);
         //setting the role depending on what asked
         if(dto.role().toUpperCase().trim().equals("LANDLORD")){
-            account.setRole(Roles.landlordRole());
+            account.setRole(Roles.LANDLORD_ROLE);
         }else{
-            account.setRole(Roles.userRole());
+            account.setRole(Roles.USER_ROLE);
         }
         account.setActive(false);
         account.setCreatedAt(LocalDateTime.now());

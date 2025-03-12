@@ -42,6 +42,9 @@ public class PropertiesService {
     @Autowired
     private StorageService storageService;
 
+    @Autowired
+    private RatingService ratingService;
+
     //caching departments
     private Set<String> departments;
 
@@ -81,7 +84,7 @@ public class PropertiesService {
     //method to create a new property
     public void createProperty(CreatePropertyDTO dto, AuthDTO authDTO){
         //if user is not a landlord then he cant create a property
-        if(!authDTO.role().equals(Roles.landlordRole())){
+        if(!authDTO.role().equals(Roles.LANDLORD_ROLE)){
             throw new ApiException(ApiError.UNATHORIZED_TO_POST_PROPERTY);
         }
         if(!Helpers.validateStrings(List.of(
@@ -147,12 +150,14 @@ public class PropertiesService {
             if(entity.getPictures().size()>0){
                 imageUrl = storageService.getUrl(entity.getPictures().get(0));
             }
+            Double rating = ratingService.getPropertyRating(entity.getId());
             var dto = new PropertyTileDTO(
                 entity.getId(),
                 entity.getName(), entity.getDepartment(), 
                 imageUrl, entity.getNumberRooms(), 
                 entity.getNumberRooms()*4,
-                entity.getNightPrice()
+                entity.getNightPrice(),
+                rating
             );
             dtos.add(dto);
         }
@@ -182,10 +187,11 @@ public class PropertiesService {
             throw new ApiException(ApiError.PROPERTY_NOT_FOUND);
         }
 
+        Double rating = ratingService.getPropertyRating(prop.getId());
         return new FullPropertyDTO(
             prop.getId(), prop.getName(), prop.getDepartment(), prop.getDescription(), 
             prop.getEnterType(), prop.isHasAsador(), prop.isHasPool(), prop.isPetFriendly(), prop.getNumberBathrooms(),
-            prop.getNumberRooms(), prop.getNightPrice(), prop.getOwner().getId()
+            prop.getNumberRooms(), prop.getNightPrice(), prop.getOwner().getId(), rating
         );
     }
 
@@ -195,7 +201,14 @@ public class PropertiesService {
         //in this case we dont care about the property, we simply call this in order to verify that the property exists and we are the owner
         getPropertyById(propertyId, authDTO);
         repo.deleteById(propertyId);
-        System.out.println("after deleting");
+    }
+
+    //for other services to use, to check existance of property
+    public void checkPropertyExists(UUID propertyId){
+        PropertyEntity prop = repo.findById(propertyId).orElse(null);
+        if(prop == null){
+            throw new ApiException(ApiError.PROPERTY_NOT_FOUND);
+        }
     }
 
 
@@ -209,5 +222,17 @@ public class PropertiesService {
             throw new ApiException(ApiError.UNATHORIZED_TO_EDIT_PROPERTY);
         }
         return prop;
+    }
+
+    //to validate number of guests
+    public boolean validatePropertyGuests(UUID propertyId, int nPeople){
+        PropertyEntity prop = repo.findById(propertyId).orElse(null);
+        if(prop == null){
+            throw new ApiException(ApiError.PROPERTY_NOT_FOUND);
+        }
+        if(nPeople < prop.getNumberRooms()*2 || nPeople > prop.getNumberRooms()*4){
+            return false ;
+        }
+        return true;
     }
 }
