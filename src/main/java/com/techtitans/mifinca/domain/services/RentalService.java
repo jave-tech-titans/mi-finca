@@ -52,7 +52,12 @@ public class RentalService {
     public List<RentalRequestDTO> getRentalRequests(Integer page, AuthDTO authDTO) {
         int limit = 10;
         int offset = page*limit - limit;
-        List<ScheduleEntity> schedules= repo.findRequestsByUserId(authDTO.userId(), limit, offset);
+        List<ScheduleEntity> schedules;
+        if(authDTO.role().equals(Roles.USER_ROLE)){
+            schedules= repo.findRequestsByUserId(authDTO.userId(), limit, offset);
+        }else{
+            schedules=repo.findRequestsByOwnerId(authDTO.userId(), limit, offset);
+        }
 
         List<RentalRequestDTO> dtos = new ArrayList<>();
         for(ScheduleEntity ent : schedules){

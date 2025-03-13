@@ -11,7 +11,7 @@ import com.techtitans.mifinca.domain.entities.RatingEntity;
 public interface RatingRepository extends JpaRepository<RatingEntity, UUID>{
     
     @Query(value = """
-        SELECT SUM(r.rating)/COUNT(r.rating) 
+        SELECT SUM(r.rating)::DOUBLE PRECISION / COUNT(r.rating) 
         FROM ratings r
         INNER JOIN schedules s ON s.id = r.schedule_id
         WHERE s.property_id = :propertyId

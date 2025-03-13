@@ -24,7 +24,7 @@ public class EmailService {
         fromEmail = email;
     }
 
-    @Value("${general.domain}")
+    @Value("${general.frontend-domain}")
     private String domain;
 
     public void sendConfirmEmail(String email, String token){

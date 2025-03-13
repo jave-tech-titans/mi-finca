@@ -29,7 +29,7 @@ public class StorageService {
     @Autowired
     private FileRepository repo;
 
-    @Value("${general.domain}")
+    @Value("${general.backend-domain}")
     private String domain;
 
     private static final String MAIN_DIRECTORY = "files"; 
@@ -67,7 +67,7 @@ public class StorageService {
     }
 
     public String getUrl(FileEntity file){
-        return domain + "/files/" + file.getUrl();
+        return domain + "/api/v1/files/" + file.getUrl();
     }
 
     public List<String> getPicturesOfProperty(UUID propertyId){
