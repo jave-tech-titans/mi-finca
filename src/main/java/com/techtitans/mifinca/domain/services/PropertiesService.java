@@ -188,10 +188,11 @@ public class PropertiesService {
         }
 
         Double rating = ratingService.getPropertyRating(prop.getId());
+        List<String> picturesUrls = storageService.getPicturesOfProperty(propertyId);
         return new FullPropertyDTO(
             prop.getId(), prop.getName(), prop.getDepartment(), prop.getDescription(), 
             prop.getEnterType(), prop.isHasAsador(), prop.isHasPool(), prop.isPetFriendly(), prop.getNumberBathrooms(),
-            prop.getNumberRooms(), prop.getNightPrice(), prop.getOwner().getId(), rating
+            prop.getNumberRooms(), prop.getNightPrice(), prop.getOwner().getId(), rating, picturesUrls
         );
     }
 

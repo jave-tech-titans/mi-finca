@@ -26,10 +26,14 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, UUID>{
     );
 
     @Query(value = """
-        SELECT s FROM schedules s
+        SELECT s.id AS id, s.start_date AS start_date, s.end_date AS end_date,
+            s.number_persons AS number_persons, s.sc_status AS sc_status, 
+            s.price AS price, s.user_id AS user_id, s.property_id AS property_id,
+            s.created_at AS created_at, s.updated_at AS updated_at, s.status AS status
+        FROM schedules s
         INNER JOIN properties p ON p.id = s.property_id
-        WHERE p.owner_id = :ownerId
-        ORDER BY updated_at DESC
+        WHERE p.account_id = :ownerId
+        ORDER BY s.updated_at DESC
         LIMIT :limit OFFSET :offset
         """, nativeQuery = true)
     List<ScheduleEntity> findRequestsByOwnerId(

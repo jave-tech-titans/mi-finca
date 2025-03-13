@@ -18,7 +18,8 @@ public class WebConfig implements WebMvcConfigurer {
         //here we suscribe the endpoints with the middleware
         registry.addInterceptor(authMiddleware)
                 .addPathPatterns("/api/v1/properties/**")
-                .addPathPatterns("/api/v1/rental/**");
+                .addPathPatterns("/api/v1/rental/**")
+                .addPathPatterns("/api/v1/payments/**");
             //.excludePathPatterns("/api/public/**");
     }
 }

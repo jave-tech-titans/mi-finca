@@ -7,6 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,6 +68,15 @@ public class StorageService {
 
     public String getUrl(FileEntity file){
         return domain + "/files/" + file.getUrl();
+    }
+
+    public List<String> getPicturesOfProperty(UUID propertyId){
+        List<FileEntity> pictures = repo.findByPropertyId(propertyId);
+        List<String> urls = new ArrayList<>();
+        for(FileEntity ent: pictures){
+            urls.add(getUrl(ent));
+        }   
+        return urls;
     }
     
 }

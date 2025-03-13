@@ -1,5 +1,6 @@
 package com.techtitans.mifinca.domain.dtos;
 
+import java.util.List;
 import java.util.UUID;
 
 public record FullPropertyDTO (
@@ -15,5 +16,6 @@ public record FullPropertyDTO (
     int numberRooms,
     double nightPrice,
     UUID ownerId,
-    Double rating
+    Double rating,
+    List<String> pictures
 ){}

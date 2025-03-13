@@ -1,6 +1,7 @@
 package com.techtitans.mifinca.domain.services;
 
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
+import com.techtitans.mifinca.domain.dtos.CreateRatingDTO;
 import com.techtitans.mifinca.domain.dtos.CreateRentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.OwnerRentaRequestDTO;
 import com.techtitans.mifinca.domain.dtos.RentalRequestDTO;
@@ -33,6 +34,9 @@ public class RentalService {
 
     @Autowired
     private PropertiesService propertiesService;
+
+    @Autowired
+    private RatingService ratingService;
 
     public List<ScheduleDTO> getPropertySchedules(UUID propertyId,SchedulesSearchFilter filter){
         propertiesService.checkPropertyExists(propertyId);
@@ -136,6 +140,7 @@ public class RentalService {
             .scStatus(ScheduleStatus.REQUESTED)
             .startDate(dto.startDate())
             .endDate(dto.endDate())
+            .numberPersons(dto.nGuests())
             .property(PropertyEntity.builder().id(propertyId).build())
             .user(AccountEntity.builder().id(authDTO.userId()).build())
             .price(propertiesService.getPropertyPrice(propertyId, ChronoUnit.DAYS.between(dto.startDate(), dto.endDate())))
@@ -144,17 +149,17 @@ public class RentalService {
     }
 
     private String checkScheduleStatus(ScheduleEntity entity){
-        if(entity.getScStatus().equals(ScheduleStatus.APPROVED) && entity.getStartDate().isAfter(LocalDate.now())){
+        if(entity.getScStatus().equals(ScheduleStatus.APPROVED) && entity.getStartDate().isBefore(LocalDate.now())){
             return ScheduleStatus.LOST;
         }
         if(!entity.getScStatus().equals(ScheduleStatus.PAID)){
             return entity.getScStatus();
         }
         if(entity.getEndDate().isBefore(LocalDate.now())){
-            return ScheduleStatus.IN_COURSE;
+            return ScheduleStatus.COMPLETED;
         }
         if(entity.getStartDate().isBefore(LocalDate.now()) && entity.getEndDate().isAfter(LocalDate.now())){
-            return ScheduleStatus.COMPLETED;
+            return ScheduleStatus.IN_COURSE;
         }
         return entity.getScStatus();
     }
@@ -198,5 +203,39 @@ public class RentalService {
         }
         throw new ApiException(ApiError.REQUEST_ISNT_IN_PAYMENT);
     
+    }
+
+    public ScheduleEntity getRentalRequestForRating(UUID scheduleId){
+        ScheduleEntity schedule = repo.findById(scheduleId).orElse(null);
+        if(schedule == null){
+            throw new ApiException(ApiError.REQUEST_NOT_FOUND);
+        }
+        String status = checkScheduleStatus(schedule);
+        if(status.equals(ScheduleStatus.RATED)){
+            throw new ApiException(ApiError.ALREADY_RATED);
+        }
+        if(!status.equals(ScheduleStatus.COMPLETED)){
+            throw new ApiException(ApiError.CANT_RATE_YET);
+        }
+        return schedule;
+    }
+
+    public void UpdatePaidRentalRequest(UUID scheduleId){
+        ScheduleEntity sch = getRentalRequestForPayment(scheduleId);
+        sch.setScStatus(ScheduleStatus.PAID);
+        repo.save(sch);
+    }
+
+    public void addRating(UUID requestId, CreateRatingDTO dto, AuthDTO authDTO){
+        //this method takes care of checking if the shcedule can be rated yet
+        ScheduleEntity sch = getRentalRequestForRating(requestId);
+        int nRates = sch.getRatings().size();
+        ratingService.addRating(sch, dto, authDTO);
+
+        //checking if with this rating both landlord and user have now rated the scheduling
+        if(nRates == 1){
+            sch.setScStatus(ScheduleStatus.RATED);
+            repo.save(sch);
+        }
     }
 }

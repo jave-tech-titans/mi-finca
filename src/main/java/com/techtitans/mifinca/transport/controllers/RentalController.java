@@ -1,6 +1,7 @@
 package com.techtitans.mifinca.transport.controllers;
 
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
+import com.techtitans.mifinca.domain.dtos.CreateRatingDTO;
 import com.techtitans.mifinca.domain.dtos.CreateRentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.OwnerRentaRequestDTO;
 import com.techtitans.mifinca.domain.dtos.RentalRequestDTO;
@@ -55,7 +56,7 @@ public class RentalController {
     }
 
     //pending to confirm if this is valid restful
-    @PatchMapping("/{request-id}/cancel")
+    @PatchMapping("/{request-id}/deny")
     public void cancelRentalRequest(
         @PathVariable("request-id") UUID requestId, 
         @RequestAttribute("auth") AuthDTO authDTO
@@ -70,5 +71,14 @@ public class RentalController {
         @RequestAttribute("auth") AuthDTO authDTO
     ) {
         rentalService.createRentalRequest(propertyId,body, authDTO);
+    }
+
+    @PostMapping("/requests/{request-id}/ratings")
+    public void rateTenant(
+        @PathVariable("request-id") UUID requestId,
+        @RequestBody CreateRatingDTO body,
+        @RequestAttribute("auth") AuthDTO authDTO
+    ) {
+        rentalService.addRating(requestId, body, authDTO);
     }
 }

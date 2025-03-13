@@ -41,4 +41,6 @@ public class RatingEntity {
 
     //for auditoring
     private LocalDateTime createdAt;
+
+    private byte status;
 }
