@@ -235,4 +235,13 @@ public class PropertiesService {
         }
         return true;
     }
+
+    //to obtain the price for n amount of nights
+    public double getPropertyPrice(UUID propertyId, Long nNights){
+        PropertyEntity prop = repo.findById(propertyId).orElse(null);
+        if(prop == null){
+            throw new ApiException(ApiError.PROPERTY_NOT_FOUND);
+        }
+        return prop.getNightPrice()*nNights;
+    }
 }

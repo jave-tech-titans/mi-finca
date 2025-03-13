@@ -25,6 +25,19 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, UUID>{
         @Param("limit") Integer limit
     );
 
+    @Query(value = """
+        SELECT s FROM schedules s
+        INNER JOIN properties p ON p.id = s.property_id
+        WHERE p.owner_id = :ownerId
+        ORDER BY updated_at DESC
+        LIMIT :limit OFFSET :offset
+        """, nativeQuery = true)
+    List<ScheduleEntity> findRequestsByOwnerId(
+        @Param("ownerId") UUID ownerId, 
+        @Param("limit") Integer limit, 
+        @Param("offset") Integer offset
+    );
+
 
     @Query(value = """
         SELECT * FROM schedules 

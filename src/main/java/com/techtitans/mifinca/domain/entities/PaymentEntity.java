@@ -1,5 +1,6 @@
 package com.techtitans.mifinca.domain.entities;
 
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,21 +26,20 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE ratings SET status = 1 WHERE id=?")
+@SQLDelete(sql = "UPDATE payments SET status = 1 WHERE id=?")
 @SQLRestriction("status = 0")
-@Table(name = "ratings") 
-public class RatingEntity {
+@Table(name = "payments")  
+public class PaymentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-    private int rating;     //from 1 to 5
-    private String comment;
-    private String type;    //if it was the landlord the one rated or the user
-    @ManyToOne
-    @JoinColumn(name="schedule_id")
-    private ScheduleEntity scheduling;
+    private UUID id; 
+    private String bank;
+    private Long accountNumber;
+    private double value;
+    @OneToOne
+    @JoinColumn(name="schedule_id") 
+    private ScheduleEntity schedule;
 
-
-    //for auditoring
+    //auditoring
     private LocalDateTime createdAt;
 }

@@ -1,10 +1,12 @@
 package com.techtitans.mifinca.domain.services;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.techtitans.mifinca.domain.entities.RatingEntity;
 import com.techtitans.mifinca.domain.entities.Roles;
 import com.techtitans.mifinca.repository.RatingRepository;
 

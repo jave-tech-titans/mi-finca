@@ -37,6 +37,7 @@ public class ScheduleEntity {
     private LocalDate endDate;
     private int numberPersons;
     private String scStatus;    //this is the business logic status, not the table one
+    private double price;
 
     @ManyToOne
     @JoinColumn(name="user_id")

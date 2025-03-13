@@ -1,11 +1,9 @@
 package com.techtitans.mifinca.transport.controllers;
 
-import com.techtitans.mifinca.domain.dtos.AcceptRentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
-import com.techtitans.mifinca.domain.dtos.CancelRentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.CreateRentalRequestDTO;
+import com.techtitans.mifinca.domain.dtos.OwnerRentaRequestDTO;
 import com.techtitans.mifinca.domain.dtos.RentalRequestDTO;
-import com.techtitans.mifinca.domain.dtos.RentalRequestTenantFilterDTO;
 import com.techtitans.mifinca.domain.dtos.ScheduleDTO;
 import com.techtitans.mifinca.domain.filters.SchedulesSearchFilter;
 import com.techtitans.mifinca.domain.services.RentalService;
@@ -31,22 +29,38 @@ public class RentalController {
         return rentalService.getPropertySchedules(propertyId, new SchedulesSearchFilter(month, year));
     }
 
+    @GetMapping("/owner/requests")
+    public List<OwnerRentaRequestDTO> getOwnerRentalRequests(
+        @RequestParam(defaultValue = "1") Integer page,
+        @RequestAttribute("auth") AuthDTO authDTO
+    ){
+        return rentalService.getOwnerRentalRequests(page, authDTO);
+    }
+
     @GetMapping("/requests")
-    public List<RentalRequestDTO> getRentalRequests(
+    public List<RentalRequestDTO> getUserRentalRequests(
         @RequestParam(defaultValue = "1") Integer page,
         @RequestAttribute("auth") AuthDTO authDTO
     ) {
         return rentalService.getRentalRequests(page, authDTO);
     }
 
-    @PatchMapping("/{request_id}/accept")
-    public void acceptRentalRequest(@PathVariable Long request_id, @RequestBody AcceptRentalRequestDTO body) {
-        rentalService.acceptRequest(request_id, body);
+    //pending to confirm if this is valid restful
+    @PatchMapping("/{request-id}/accept")
+    public void acceptRentalRequest(
+        @PathVariable("request-id") UUID requestId, 
+        @RequestAttribute("auth") AuthDTO authDTO
+    ) {
+        rentalService.acceptRequest(requestId, authDTO);
     }
 
-    @PatchMapping("/{request_id}/cancel")
-    public void cancelRentalRequest(@PathVariable Long request_id, @RequestBody CancelRentalRequestDTO body) {
-        rentalService.cancelRequest(request_id, body);
+    //pending to confirm if this is valid restful
+    @PatchMapping("/{request-id}/cancel")
+    public void cancelRentalRequest(
+        @PathVariable("request-id") UUID requestId, 
+        @RequestAttribute("auth") AuthDTO authDTO
+    ) {
+        rentalService.cancelRequest(requestId, authDTO);
     }
 
     @PostMapping("/properties/{property-id}/requests")
@@ -56,10 +70,5 @@ public class RentalController {
         @RequestAttribute("auth") AuthDTO authDTO
     ) {
         rentalService.createRentalRequest(propertyId,body, authDTO);
-    }
-
-    @GetMapping("/tenant")
-    public List<?> getTenantRentalRequests(@RequestBody RentalRequestTenantFilterDTO body) {
-        return rentalService.getTenantRentalRequests(body);
     }
 }

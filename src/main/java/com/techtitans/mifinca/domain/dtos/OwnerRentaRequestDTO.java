@@ -4,15 +4,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record RentalRequestDTO(
+public record OwnerRentaRequestDTO(
     UUID id,
     UUID propertyId,
+    UUID userId,
+    String userName,
     String propertyName,
     LocalDate startDate,
     LocalDate endDate,
-    String status,
     LocalDateTime requestedAt,
+    String status,
     double price
-){
-    
-}
+) {}
