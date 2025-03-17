@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -26,13 +25,15 @@ import com.techtitans.mifinca.repository.FileRepository;
 @Service
 public class StorageService {
 
-    @Autowired
     private FileRepository repo;
-
-    @Value("${general.backend-domain}")
     private String domain;
 
     private static final String MAIN_DIRECTORY = "files"; 
+
+    public StorageService(FileRepository repo, @Value("${general.backend-domain}") String domain){
+        this.repo = repo;
+        this.domain = domain;
+    }
 
     public void saveFile(PropertyEntity prop,String path, InputStream file){
         writeFile(path, file);

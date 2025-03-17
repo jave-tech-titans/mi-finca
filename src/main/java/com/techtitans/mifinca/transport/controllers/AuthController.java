@@ -14,7 +14,10 @@ import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
 import com.techtitans.mifinca.domain.services.AccountService;
 import com.techtitans.mifinca.domain.services.AuthService;
 
+import lombok.AllArgsConstructor;
+
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 

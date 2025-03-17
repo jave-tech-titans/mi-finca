@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -36,14 +35,19 @@ import com.techtitans.mifinca.utils.Helpers;
 
 @Service
 public class PropertiesService {
-    @Autowired
     private PropertyRepository repo; 
-
-    @Autowired
     private StorageService storageService;
-
-    @Autowired
     private RatingService ratingService;
+
+    public PropertiesService(
+        PropertyRepository repo,
+        StorageService storageService,
+        RatingService ratingService
+    ){
+        this.repo = repo;
+        this.storageService = storageService;
+        this.ratingService = ratingService;
+    }
 
     //caching departments
     private Set<String> departments;

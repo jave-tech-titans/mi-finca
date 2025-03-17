@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,20 +25,24 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class AuthService {
-    private static String secretKey;
 
-    public static void setSecret(String secret){
-        secretKey = secret;
+    private String secretKey;
+    private long jwtExpiration;
+    private long refreshExpiration;
+    private SessionRepository repo;
+
+    public AuthService(
+        @Value("${security.jwt.secret_key}") String secretKey,
+        @Value("${security.jwt.expiration}") long jwtExpiration,
+        @Value("${security.refresh.expiration}") long refreshExpiration,
+        SessionRepository repo
+    ){
+        this.secretKey = secretKey;
+        this.jwtExpiration = jwtExpiration;
+        this.refreshExpiration = refreshExpiration;
+        this.repo = repo;
     }
 
-    @Value("${security.jwt.expiration}")
-    private long jwtExpiration;
-
-    @Value("${security.refresh.expiration}")
-    private long refreshExpiration;
-
-    @Autowired
-    private SessionRepository repo;
 
     public AccessTokenDTO createSession(AccountEntity account){
         UUID sesionToken = UUID.randomUUID();

@@ -16,7 +16,6 @@ import com.techtitans.mifinca.domain.exceptions.ApiException;
 import com.techtitans.mifinca.domain.filters.SchedulesSearchFilter;
 import com.techtitans.mifinca.repository.ScheduleRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,14 +28,19 @@ import java.util.UUID;
 @Service
 public class RentalService {
 
-    @Autowired
     private ScheduleRepository repo;
-
-    @Autowired
     private PropertiesService propertiesService;
-
-    @Autowired
     private RatingService ratingService;
+
+    public RentalService(
+        ScheduleRepository repo,
+        PropertiesService propertiesService,
+        RatingService ratingService
+    ){
+        this.repo = repo;
+        this.propertiesService = propertiesService;
+        this.ratingService = ratingService;
+    }
 
     public List<ScheduleDTO> getPropertySchedules(UUID propertyId,SchedulesSearchFilter filter){
         propertiesService.checkPropertyExists(propertyId);

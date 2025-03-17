@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.dtos.CreatePaymentDTO;
 import com.techtitans.mifinca.domain.entities.PaymentEntity;
@@ -18,17 +16,19 @@ import com.techtitans.mifinca.repository.PaymentRepository;
 @Service
 public class PaymentService {
 
+    private PaymentRepository repo;
+    private RentalService rentalService; 
+
+    public PaymentService(PaymentRepository repo, RentalService rentalService){
+        this.repo = repo;
+        this.rentalService = rentalService;
+    }
+    
     private Set<String> banks = Set.of(
         "Bancolombia", "Davivienda", "Banco de Bogotá",
         "Banco de occidente", "ScotiaBank Colpatria",
         "Nequi", "NuBank", "Lula Bank"
     );
-
-    @Autowired
-    private PaymentRepository repo;
-
-    @Autowired
-    private RentalService rentalService;  
 
     public Set<String> getBanks(){
         return banks;

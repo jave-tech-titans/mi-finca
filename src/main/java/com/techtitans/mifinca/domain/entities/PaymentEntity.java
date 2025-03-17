@@ -41,4 +41,6 @@ public class PaymentEntity {
 
     //auditoring
     private LocalDateTime createdAt;
+
+    private byte status;
 }

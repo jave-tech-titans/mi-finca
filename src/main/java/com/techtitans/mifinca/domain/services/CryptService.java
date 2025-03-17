@@ -1,16 +1,20 @@
 package com.techtitans.mifinca.domain.services;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 
 import java.util.Base64;
 
 @Service
 public class CryptService {
 
-    private static String key;
-    public static void setKey(String key){
-        CryptService.key = key;
+    private String key;
+
+    public CryptService(@Value("${security.crypt_key}") String key){
+        this.key = key;
     }
 
     public String encryptAES(String text){

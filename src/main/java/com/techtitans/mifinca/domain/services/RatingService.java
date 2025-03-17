@@ -3,7 +3,6 @@ package com.techtitans.mifinca.domain.services;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
@@ -18,8 +17,11 @@ import com.techtitans.mifinca.repository.RatingRepository;
 @Service
 public class RatingService {
     
-    @Autowired
     private RatingRepository repo;
+
+    public RatingService(RatingRepository repo){
+        this.repo = repo;
+    }
   
     public Double getPropertyRating(UUID propertyId){
         return repo.getPropertyRating(propertyId, Roles.LANDLORD_ROLE);

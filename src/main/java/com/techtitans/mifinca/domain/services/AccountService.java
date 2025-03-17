@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.techtitans.mifinca.domain.dtos.AccessTokenDTO;
 import com.techtitans.mifinca.domain.dtos.ConfirmAccountDTO;
 import com.techtitans.mifinca.domain.dtos.LoginDTO;
@@ -22,18 +20,24 @@ import com.techtitans.mifinca.utils.Helpers;
 
 @Service
 public class AccountService {
-    
-    @Autowired
-    private AccountRepository repo;
-    @Autowired
-    private ConfirmationService confirmationService;
-    @Autowired
-    private CryptService cryptService;
-    @Autowired
-    private AuthService authService;
-    
-    
 
+    private AccountRepository repo;
+    private ConfirmationService confirmationService;
+    private CryptService cryptService;
+    private AuthService authService;
+
+    public AccountService(
+        AccountRepository repo,
+        ConfirmationService confirmationService,
+        CryptService cryptService,
+        AuthService authService
+    ){
+        this.repo = repo;
+        this.confirmationService = confirmationService;
+        this.cryptService = cryptService;
+        this.authService = authService;
+    }
+    
     //method which registers the new account, account creation
     public void registerAccount(RegisterAccountDTO dto){
         //fields validation

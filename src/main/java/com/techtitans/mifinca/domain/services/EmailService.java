@@ -14,18 +14,19 @@ import com.techtitans.mifinca.domain.exceptions.ApiException;
 @Service
 public class EmailService {
 
-    private static String apiKey;
-    private static String fromEmail;
-
-    public static void setApiAkey(String key){
-        apiKey = key;
-    }
-    public static void setFromEmail(String email){
-        fromEmail = email;
-    }
-
-    @Value("${general.frontend-domain}")
+    private String apiKey;
+    private String fromEmail;
     private String domain;
+
+    public EmailService(
+        @Value("${email.api_key}") String apiKey,
+        @Value("${email.from_email}") String fromEmail,
+        @Value("${general.frontend-domain}") String domain
+    ){
+        this.apiKey = apiKey;
+        this.fromEmail = fromEmail;
+        this.domain = domain;
+    }
 
     public void sendConfirmEmail(String email, String token){
         Email from = new Email(fromEmail);
