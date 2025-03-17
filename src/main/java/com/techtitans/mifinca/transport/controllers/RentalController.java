@@ -8,7 +8,6 @@ import com.techtitans.mifinca.domain.dtos.RentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.ScheduleDTO;
 import com.techtitans.mifinca.domain.filters.SchedulesSearchFilter;
 import com.techtitans.mifinca.domain.services.RentalService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +17,11 @@ import java.util.UUID;
 @RequestMapping("/api/v1/rental")
 public class RentalController {
 
-    @Autowired
     private RentalService rentalService;
+
+    public RentalController(RentalService rentalService){
+        this.rentalService = rentalService;
+    }
 
     @GetMapping("/properties/{property-id}/schedules")
     public List<ScheduleDTO> getPropertySchedules(

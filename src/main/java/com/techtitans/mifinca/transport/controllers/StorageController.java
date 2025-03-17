@@ -4,7 +4,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,8 +19,11 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/v1/files")
 public class StorageController {
-    @Autowired
     private StorageService storageService;
+
+    public StorageController(StorageService storageService){
+        this.storageService = storageService;
+    }
 
     @GetMapping("/**")
     public ResponseEntity<Resource> serveFile(HttpServletRequest request) throws Exception{

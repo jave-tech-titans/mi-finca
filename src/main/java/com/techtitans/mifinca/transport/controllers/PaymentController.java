@@ -3,7 +3,6 @@ package com.techtitans.mifinca.transport.controllers;
 import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +19,11 @@ import com.techtitans.mifinca.domain.services.PaymentService;
 @RequestMapping("/api/v1/payments")
 public class PaymentController {
 
-    @Autowired
     private PaymentService service; 
+
+    public PaymentController(PaymentService service){
+        this.service = service;
+    }
 
     @GetMapping("/banks")
     public Set<String> getBanks(){

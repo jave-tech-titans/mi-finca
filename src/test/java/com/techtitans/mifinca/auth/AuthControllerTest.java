@@ -76,7 +76,7 @@ public class AuthControllerTest {
         validDto = new RegisterAccountDTO("John", "Doe", "john.doe@example.com", "password123", "34234234", "USER");
         validEntity = AccountEntity
             .builder()
-            .id(UUID.fromString("cf3a804c-fadc-4761-967b-7a4bb92444d1"))
+            .id(UUID.randomUUID())
             .email(validDto.email())
             .hash(cryptService.encryptAES(validDto.password()))
             .isActive(true)

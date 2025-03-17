@@ -1,6 +1,5 @@
 package com.techtitans.mifinca.transport.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,17 +13,18 @@ import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
 import com.techtitans.mifinca.domain.services.AccountService;
 import com.techtitans.mifinca.domain.services.AuthService;
 
-import lombok.AllArgsConstructor;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    @Autowired
     private AccountService service;
+    private AuthService authService;
 
-    @Autowired AuthService authService;
+    public AuthController(AccountService service, AuthService authService){
+        this.service = service;
+        this.authService = authService;
+    }
 
     //FOR BOTH TYPE OF USERS
     @PostMapping("/accounts")
