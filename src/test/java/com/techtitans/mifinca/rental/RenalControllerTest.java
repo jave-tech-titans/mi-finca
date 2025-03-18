@@ -496,15 +496,15 @@ public class RenalControllerTest {
     
     @Test
     void createRentalRequest_Success() {
-        UUID propertyId = UUID.randomUUID();
+        UUID propId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
         AuthDTO authDTO = new AuthDTO(userId, Roles.USER_ROLE);
         LocalDate startDate = LocalDate.now().plusDays(5);
         LocalDate endDate = LocalDate.now().plusDays(7);
 
-        doReturn(true).when(spyPropertiesService).validatePropertyGuests(propertyId, 4);
-        doReturn(300.0).when(spyPropertiesService).getPropertyPrice(propertyId, 2L);
-        when(scheduleRepository.findAllByPropertyId(propertyId, null, startDate.getYear(), 100))
+        doReturn(true).when(spyPropertiesService).validatePropertyGuests(propId, 4);
+        doReturn(300.0).when(spyPropertiesService).getPropertyPrice(propId, 2L);
+        when(scheduleRepository.findAllByPropertyId(propId, null, startDate.getYear(), 100))
             .thenReturn(Collections.emptyList());
 
         CreateRentalRequestDTO body = new CreateRentalRequestDTO(
@@ -512,13 +512,13 @@ public class RenalControllerTest {
         );
 
         when(scheduleRepository.save(any(ScheduleEntity.class))).thenAnswer(inv -> inv.getArgument(0));
-        assertDoesNotThrow(() -> rentalController.createRentalRequest(propertyId, body, authDTO));
+        assertDoesNotThrow(() -> rentalController.createRentalRequest(propId, body, authDTO));
         verify(scheduleRepository).save(any(ScheduleEntity.class));
     }
 
     @Test
     void createRentalRequest_UserIsLandlord_ThrowsUnauthorized() {
-        UUID propertyId = UUID.randomUUID();
+        UUID propId = UUID.randomUUID();
         AuthDTO authDTO = new AuthDTO(UUID.randomUUID(), Roles.LANDLORD_ROLE); 
 
         CreateRentalRequestDTO body = new CreateRentalRequestDTO(
@@ -527,7 +527,7 @@ public class RenalControllerTest {
             2
         );
         ApiException ex = assertThrows(ApiException.class,
-            () -> rentalController.createRentalRequest(propertyId, body, authDTO)
+            () -> rentalController.createRentalRequest(propId, body, authDTO)
         );
         assertEquals(ApiError.UNATHORIZED_TO_REQUEST, ex.getError());
         verify(scheduleRepository, never()).save(any());
@@ -535,11 +535,11 @@ public class RenalControllerTest {
 
     @Test
     void createRentalRequest_Collision_ThrowsInvalidScheduleDates() {
-        UUID propertyId = UUID.randomUUID();
+        UUID propId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
         AuthDTO authDTO = new AuthDTO(userId, Roles.USER_ROLE);
 
-        doReturn(true).when(spyPropertiesService).validatePropertyGuests(propertyId, 3);
+        doReturn(true).when(spyPropertiesService).validatePropertyGuests(propId, 3);
 
         ScheduleEntity existing = ScheduleEntity.builder()
             .id(UUID.randomUUID())
@@ -548,7 +548,7 @@ public class RenalControllerTest {
             .endDate(LocalDate.now().plusDays(6))
             .build();
 
-        when(scheduleRepository.findAllByPropertyId(propertyId, null, LocalDate.now().plusDays(5).getYear(), 100))
+        when(scheduleRepository.findAllByPropertyId(propId, null, LocalDate.now().plusDays(5).getYear(), 100))
             .thenReturn(List.of(existing));
 
         CreateRentalRequestDTO body = new CreateRentalRequestDTO(
@@ -558,7 +558,7 @@ public class RenalControllerTest {
         );
 
         ApiException ex = assertThrows(ApiException.class,
-            () -> rentalController.createRentalRequest(propertyId, body, authDTO)
+            () -> rentalController.createRentalRequest(propId, body, authDTO)
         );
         assertEquals(ApiError.INVALID_SCHEDULE_DATES, ex.getError());
         verify(scheduleRepository, never()).save(any());

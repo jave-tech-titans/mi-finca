@@ -26,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.dtos.CreatePropertyDTO;
@@ -152,14 +153,14 @@ public class PropertiesControllerTest {
     
      @Test
     void getProperty_Success() {
-        UUID propertyId = UUID.randomUUID();
+        UUID propId = UUID.randomUUID();
         double mockRating = 4.5;
         AccountEntity owner = AccountEntity.builder()
             .id(UUID.randomUUID())
             .build();
 
         PropertyEntity propertyEntity = PropertyEntity.builder()
-            .id(propertyId)
+            .id(propId)
             .name("Finca 1")
             .department("Meta")
             .description("A beautiful property")
@@ -173,19 +174,19 @@ public class PropertiesControllerTest {
             .owner(owner)
             .build();
 
-        when(repo.findById(propertyId)).thenReturn(Optional.of(propertyEntity));
-        when(ratingRepo.getPropertyRating(propertyId, Roles.LANDLORD_ROLE)).thenReturn(mockRating);
-        when(fileRepo.findByPropertyId(propertyId)).thenReturn(List.of(
+        when(repo.findById(propId)).thenReturn(Optional.of(propertyEntity));
+        when(ratingRepo.getPropertyRating(propId, Roles.LANDLORD_ROLE)).thenReturn(mockRating);
+        when(fileRepo.findByPropertyId(propId)).thenReturn(List.of(
             FileEntity.builder().url("picture1.jpg").build(),
             FileEntity.builder().url("picture2.jpg").build()
         ));
 
         //Act
-        FullPropertyDTO result = controller.getProperty(propertyId);
+        FullPropertyDTO result = controller.getProperty(propId);
 
         //assert
         assertNotNull(result);
-        assertEquals(propertyId, result.id());
+        assertEquals(propId, result.id());
         assertEquals("Finca 1", result.name());
         assertEquals("Meta", result.department());
         assertEquals("A beautiful property", result.description());
@@ -205,29 +206,29 @@ public class PropertiesControllerTest {
 
     @Test
     void getProperty_NotFound() {
-        UUID propertyId = UUID.randomUUID();
-        when(repo.findById(propertyId)).thenReturn(Optional.empty());
+        UUID propId = UUID.randomUUID();
+        when(repo.findById(propId)).thenReturn(Optional.empty());
         ApiException thrown = assertThrows(ApiException.class, 
-            () -> controller.getProperty(propertyId)
+            () -> controller.getProperty(propId)
         );
         assertEquals(ApiError.PROPERTY_NOT_FOUND, thrown.getError());
     }
 
     @Test
     void getProperty_RatingIsNull() {
-        UUID propertyId = UUID.randomUUID();
+        UUID propId = UUID.randomUUID();
         PropertyEntity propertyEntity = PropertyEntity.builder()
-            .id(propertyId)
+            .id(propId)
             .name("Finca Null Rating")
             .department("Unknown")
             .owner(AccountEntity.builder().id(UUID.randomUUID()).build())
             .build();
 
-        when(repo.findById(propertyId)).thenReturn(Optional.of(propertyEntity));
-        when(ratingRepo.getPropertyRating(propertyId, Roles.LANDLORD_ROLE)).thenReturn(null);
-        when(fileRepo.findByPropertyId(propertyId)).thenReturn(Collections.emptyList());
+        when(repo.findById(propId)).thenReturn(Optional.of(propertyEntity));
+        when(ratingRepo.getPropertyRating(propId, Roles.LANDLORD_ROLE)).thenReturn(null);
+        when(fileRepo.findByPropertyId(propId)).thenReturn(Collections.emptyList());
 
-        FullPropertyDTO result = controller.getProperty(propertyId);
+        FullPropertyDTO result = controller.getProperty(propId);
 
         assertNotNull(result);
         assertNull(result.rating());
@@ -320,38 +321,100 @@ public class PropertiesControllerTest {
     
     @Test
     void deactivateProperty_Success() {
-        UUID propertyId = UUID.randomUUID();
+        UUID propId = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
 
         PropertyEntity existingProperty = PropertyEntity.builder()
-                .id(propertyId)
+                .id(propId)
                 .owner(AccountEntity.builder().id(ownerId).build())
                 .build();
 
-        when(repo.findById(propertyId)).thenReturn(Optional.of(existingProperty));
+        when(repo.findById(propId)).thenReturn(Optional.of(existingProperty));
         AuthDTO validAuth = new AuthDTO(ownerId, "LANDLORD");
-        assertDoesNotThrow(() -> controller.deactivateProperty(propertyId, validAuth));
+        assertDoesNotThrow(() -> controller.deactivateProperty(propId, validAuth));
 
-        verify(repo, times(1)).deleteById(propertyId);
+        verify(repo, times(1)).deleteById(propId);
     }
 
     @Test
     void deactivateProperty_UserNotOwner() {
-        UUID propertyId = UUID.randomUUID();
+        UUID propId = UUID.randomUUID();
         UUID actualOwnerId = UUID.randomUUID();
         UUID otherUserId = UUID.randomUUID();
         PropertyEntity existingProperty = PropertyEntity.builder()
-                .id(propertyId)
+                .id(propId)
                 .owner(AccountEntity.builder().id(actualOwnerId).build())
                 .build();
 
-        when(repo.findById(propertyId)).thenReturn(Optional.of(existingProperty));
+        when(repo.findById(propId)).thenReturn(Optional.of(existingProperty));
         AuthDTO invalidAuth = new AuthDTO(otherUserId, "USER");
         ApiException ex = assertThrows(ApiException.class,
-                () -> controller.deactivateProperty(propertyId, invalidAuth));
+                () -> controller.deactivateProperty(propId, invalidAuth));
 
         assertEquals(ApiError.UNATHORIZED_TO_EDIT_PROPERTY, ex.getError());
 
         verify(repo, never()).deleteById(any());
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                     GET DEPARTMENTS TEST                                                                //////////////////////////
+    
+    @Test
+    void getDepartments_Success() {
+       var result = controller.getDepartments();
+
+       assertTrue(result.contains("Meta"));
+       assertTrue(result.contains("Amazonas"));
+       assertTrue(result.contains("Antioquia"));
+       assertTrue(result.contains("Córdoba"));
+       assertTrue(result.contains("Putumayo"));
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                     UPLOAD PICTURE TESTS                                                                //////////////////////////
+     
+    @Test
+    void uploadPicture_Success() throws Exception {
+        UUID propId = UUID.randomUUID();
+        UUID ownerId = UUID.randomUUID();
+        PropertyEntity property = PropertyEntity.builder()
+            .id(propId)
+            .owner(AccountEntity.builder().id(ownerId).build())
+            .build();
+        when(repo.findById(propId)).thenReturn(Optional.of(property));
+
+        MockMultipartFile multipartFile = new MockMultipartFile(
+            "picture", "test.jpg", "image/jpeg", "dummy content".getBytes()
+        );
+        AuthDTO auth = new AuthDTO(ownerId, "LANDLORD");
+        controller.uploadPicture(propId, multipartFile, auth);
+
+        assertDoesNotThrow(()->controller.uploadPicture(propId, multipartFile, auth));
+    }
+
+    @Test
+    void uploadPicture_Unauthorized() throws Exception {
+        UUID propId = UUID.randomUUID();
+        UUID ownerId = UUID.randomUUID();
+        PropertyEntity property = PropertyEntity.builder()
+            .id(propId)
+            .owner(AccountEntity.builder().id(UUID.randomUUID()).build()) 
+            .build();
+        when(repo.findById(propId)).thenReturn(Optional.of(property));
+
+        MockMultipartFile multipartFile = new MockMultipartFile(
+            "picture", "test.jpg", "image/jpeg", "dummy content".getBytes()
+        );
+        AuthDTO auth = new AuthDTO(ownerId, "LANDLORD"); 
+
+        ApiException ex = assertThrows(ApiException.class,
+            () -> controller.uploadPicture(propId, multipartFile, auth)
+        );
+        assertEquals(ApiError.UNATHORIZED_TO_EDIT_PROPERTY, ex.getError());
     }
 }

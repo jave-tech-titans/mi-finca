@@ -35,10 +35,8 @@ public class RatingService {
         String ratingWho = authDTO.userId().equals(sch.getUser().getId()) ? Roles.LANDLORD_ROLE : Roles.USER_ROLE;
         //checking if we already rated
         int nRates = sch.getRatings().size();
-        if(nRates == 1){
-            if(sch.getRatings().get(0).getType().equals(ratingWho)){
-                throw new ApiException(ApiError.ALREADY_RATED);
-            }
+        if(nRates == 1 && sch.getRatings().get(0).getType().equals(ratingWho)){
+            throw new ApiException(ApiError.ALREADY_RATED);
         }
 
         //if not rated yet, then store the rating

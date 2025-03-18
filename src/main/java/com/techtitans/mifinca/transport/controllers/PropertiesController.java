@@ -1,5 +1,7 @@
 package com.techtitans.mifinca.transport.controllers;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,7 +97,7 @@ public class PropertiesController {
         @PathVariable("property-id") UUID propertyId, 
         @RequestParam("picture") MultipartFile picture, 
         @RequestAttribute("auth") AuthDTO authDTO
-    ) throws Exception{
+    ) throws MalformedURLException, IOException{
         String picName = picture.getOriginalFilename();
         var fileStream = picture.getInputStream();
         service.uploadPicture(propertyId, picName, fileStream, authDTO);

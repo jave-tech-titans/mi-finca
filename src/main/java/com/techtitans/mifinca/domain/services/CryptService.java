@@ -27,7 +27,6 @@ public class CryptService {
             byte[] encryptedData = cipher.doFinal(text.getBytes());
             return Base64.getEncoder().encodeToString(encryptedData);
         }catch(Exception ex){
-            System.out.println(ex.toString());
             //bad practice, but, is not probably that the crypt of the key fail
             return "";
         }

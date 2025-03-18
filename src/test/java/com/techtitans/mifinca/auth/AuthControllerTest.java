@@ -2,9 +2,13 @@ package com.techtitans.mifinca.auth;
 
 
 import com.techtitans.mifinca.domain.dtos.AccessTokenDTO;
+import com.techtitans.mifinca.domain.dtos.ConfirmAccountDTO;
 import com.techtitans.mifinca.domain.dtos.LoginDTO;
+import com.techtitans.mifinca.domain.dtos.RefreshTokenDTO;
 import com.techtitans.mifinca.domain.dtos.RegisterAccountDTO;
 import com.techtitans.mifinca.domain.entities.AccountEntity;
+import com.techtitans.mifinca.domain.entities.ConfirmationEntity;
+import com.techtitans.mifinca.domain.entities.SessionEntity;
 import com.techtitans.mifinca.domain.exceptions.ApiError;
 import com.techtitans.mifinca.domain.exceptions.ApiException;
 import com.techtitans.mifinca.domain.services.AccountService;
@@ -25,12 +29,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -139,4 +145,121 @@ public class AuthControllerTest {
         assertEquals(ApiError.INCORRECT_PASSWORD, ex.getError());
     }
 
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                     ACTIVATE ACCOUNT TESTS                                                                      //////////////////////////
+
+    @Test
+    void activateAccount_Success() {
+        UUID code = UUID.randomUUID();
+        AccountEntity existingAccount = AccountEntity.builder()
+            .id(UUID.randomUUID())
+            .email("test@example.com")
+            .role("USER")
+            .isActive(false)
+            .build();
+
+        ConfirmationEntity confirmationEntity = new ConfirmationEntity(
+                code,
+                existingAccount,
+                LocalDateTime.now()
+        );
+
+        when(confirmRepository.findByToken(code)).thenReturn(Optional.of(confirmationEntity));
+        when(accountRepository.findById(existingAccount.getId()))
+            .thenReturn(Optional.of(existingAccount));
+
+        ConfirmAccountDTO body = new ConfirmAccountDTO(code.toString());
+        AccessTokenDTO result = authController.activateAccount(body);
+        assertNotNull(result);
+    }
+
+    @Test
+    void activateAccount_ConfirmationNotFound() {
+        UUID code = UUID.randomUUID();
+        when(confirmRepository.findByToken(code)).thenReturn(Optional.empty());
+        ConfirmAccountDTO body = new ConfirmAccountDTO(code.toString());
+        ApiException ex = assertThrows(ApiException.class,
+            () -> authController.activateAccount(body)
+        );
+        assertEquals(ApiError.NON_EXISTING_ACCOUNT, ex.getError());
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                     REFRESH SESSION TEST                                                                //////////////////////////
+    /// 
+    
+    @Test
+    void refresh_Success() {
+        UUID refreshTokenUuid = UUID.randomUUID();
+        String refreshTokenStr = refreshTokenUuid.toString();
+
+        AccountEntity user = AccountEntity.builder()
+            .id(UUID.randomUUID())
+            .email("user@example.com")
+            .role("USER")
+            .build();
+        SessionEntity session = SessionEntity.builder()
+            .id(UUID.randomUUID())
+            .token(refreshTokenUuid)
+            .user(user)
+            .createdAt(LocalDateTime.now().minusMinutes(1))
+            .expiresAt(LocalDateTime.now().plusMinutes(10))
+            .build();
+
+        when(sessionRepository.findByToken(refreshTokenUuid))
+            .thenReturn(Optional.of(session));
+
+        RefreshTokenDTO body = new RefreshTokenDTO(refreshTokenStr);
+
+        AccessTokenDTO result = authController.refresh(body);
+        assertNotNull(result);
+        assertNotNull(result.accessToken());
+        assertEquals(refreshTokenStr, result.refreshToken());
+    }
+
+    @Test
+    void refresh_InvalidToken_ThrowsInvalidToken() {
+        UUID refreshTokenUuid = UUID.randomUUID();
+        String refreshTokenStr = refreshTokenUuid.toString();
+
+        when(sessionRepository.findByToken(refreshTokenUuid))
+            .thenReturn(Optional.empty());
+
+        RefreshTokenDTO body = new RefreshTokenDTO(refreshTokenStr);
+        ApiException ex = assertThrows(ApiException.class, () -> authController.refresh(body));
+        assertEquals(ApiError.INVALID_TOKEN, ex.getError());
+    }
+
+    @Test
+    void refresh_ExpiredToken_ThrowsExpiredToken() {
+        UUID refreshTokenUuid = UUID.randomUUID();
+        String refreshTokenStr = refreshTokenUuid.toString();
+
+        AccountEntity user = AccountEntity.builder()
+            .id(UUID.randomUUID())
+            .email("user@example.com")
+            .role("USER")
+            .build();
+        SessionEntity session = SessionEntity.builder()
+            .id(UUID.randomUUID())
+            .token(refreshTokenUuid)
+            .user(user)
+            .createdAt(LocalDateTime.now().minusMinutes(10))
+            .expiresAt(LocalDateTime.now().minusMinutes(1))
+            .build();
+
+        when(sessionRepository.findByToken(refreshTokenUuid))
+            .thenReturn(Optional.of(session));
+
+        RefreshTokenDTO body = new RefreshTokenDTO(refreshTokenStr);
+        ApiException ex = assertThrows(ApiException.class, () -> authController.refresh(body));
+        assertEquals(ApiError.EXPIRED_TOKEN, ex.getError());
+        verify(sessionRepository).deleteById(session.getId());
+    }
 }

@@ -3,6 +3,7 @@ package com.techtitans.mifinca.domain.services;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,7 +46,7 @@ public class StorageService {
         );
     }
 
-     public Resource getFile(String relativePath) throws Exception {
+     public Resource getFile(String relativePath) throws MalformedURLException {
         Path filePath = Paths.get(MAIN_DIRECTORY).resolve(relativePath).normalize();
         if (!Files.exists(filePath)) {
             throw new ApiException(ApiError.FILE_NOT_FOUND);

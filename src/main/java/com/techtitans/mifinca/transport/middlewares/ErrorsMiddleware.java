@@ -18,9 +18,10 @@ public class ErrorsMiddleware {
 
     private Map<ErrorType, HttpStatus> errorCodesMapping;
 
-    ErrorsMiddleware(){
+    public ErrorsMiddleware(){
         initCodesMap();
     }
+
 
     private void initCodesMap(){
         errorCodesMapping = new HashMap<>();

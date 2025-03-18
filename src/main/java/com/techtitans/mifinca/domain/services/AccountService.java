@@ -64,7 +64,6 @@ public class AccountService {
         }
         //we create the entity, and then we save it (WITH ACTIVE FIELD FALSE BECAUSE IT HASNT BEEN ACTIVATED)
         //model mapper didnt work, so for now lets implement a factory method
-        //AccountEntity account = modelMapper.map(dto, AccountEntity.class);
         AccountEntity account = AccountEntity.fromRegisterDTO(dto);
         //setting the role depending on what asked
         if(dto.role().toUpperCase().trim().equals("LANDLORD")){

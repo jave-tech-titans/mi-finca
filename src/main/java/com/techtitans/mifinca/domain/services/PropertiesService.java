@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -71,18 +72,18 @@ public class PropertiesService {
                List<JsonNode> nodeList = mapper.readValue(response.body(), new TypeReference<List<JsonNode>>() {});
                return nodeList.stream().map((node)->node.get("name").toString().trim().replace("\"", "")).collect(Collectors.toSet());
             } else {
-                return null;
+                return new HashSet<>();
             }
         } catch (Exception e) {
-           return null;
+           return new HashSet<>();
         }
     }
 
     //method to retrieve all the valid departments based on a third party API
     public List<String> retrieveDepartments(){
-        var departments = new ArrayList<String>();
-        departments.addAll(getDepartments());
-        return departments;
+        var depts = new ArrayList<String>();
+        depts.addAll(getDepartments());
+        return depts;
     }
 
     //method to create a new property
@@ -173,10 +174,8 @@ public class PropertiesService {
     public void updateProperty(UUID propertyId, UpdatePropertyDTO dto, AuthDTO authDTO){
         PropertyEntity property = getPropertyById(propertyId, authDTO);
         //if changed department then validated
-        if(dto.department() != null){
-            if(!getDepartments().contains(dto.department())){
-                throw new ApiException(ApiError.INVALID_DEPARTMENT);
-            }
+        if(dto.department() != null && (!getDepartments().contains(dto.department()))){
+            throw new ApiException(ApiError.INVALID_DEPARTMENT);
         }
         property.updateWithDTO(dto);
         property.setUpdatedAt(LocalDateTime.now());

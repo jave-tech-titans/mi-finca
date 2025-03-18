@@ -1,6 +1,9 @@
 package com.techtitans.mifinca.domain.entities;
 
 public class Roles {
-    public final static String LANDLORD_ROLE = "LANDLORD";
-    public final static String USER_ROLE = "USER";
+
+    private Roles(){}
+
+    public static final String LANDLORD_ROLE = "LANDLORD";
+    public static final String USER_ROLE = "USER";
 }

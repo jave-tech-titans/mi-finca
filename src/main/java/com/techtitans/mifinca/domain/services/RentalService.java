@@ -130,7 +130,6 @@ public class RentalService {
         //we're going to check the availability of the property in the selected dates
         int year = dto.startDate().getYear();
         List<ScheduleEntity> schedules = repo.findAllByPropertyId(propertyId, null, year, 100);
-        System.out.println(schedules.size());
         for(ScheduleEntity sch : schedules){
             if( 
                 (!sch.getScStatus().equals(ScheduleStatus.DENIED) )&&  //if the sch is not canceled or denied and it collisions
