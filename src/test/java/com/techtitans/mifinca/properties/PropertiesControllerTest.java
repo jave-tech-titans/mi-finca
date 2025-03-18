@@ -181,10 +181,8 @@ public class PropertiesControllerTest {
             FileEntity.builder().url("picture2.jpg").build()
         ));
 
-        //Act
         FullPropertyDTO result = controller.getProperty(propId);
 
-        //assert
         assertNotNull(result);
         assertEquals(propId, result.id());
         assertEquals("Finca 1", result.name());
@@ -416,5 +414,91 @@ public class PropertiesControllerTest {
             () -> controller.uploadPicture(propId, multipartFile, auth)
         );
         assertEquals(ApiError.UNATHORIZED_TO_EDIT_PROPERTY, ex.getError());
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                     GET MY PROPERTIES                                                                  //////////////////////////
+    
+    @Test
+    void getMyProperties_Success() {
+        UUID ownerId = UUID.randomUUID();
+        AuthDTO auth = new AuthDTO(ownerId, "LANDLORD");
+        int page = 1;  // default page
+        UUID propId1 = UUID.randomUUID();
+        PropertyEntity property1 = PropertyEntity.builder()
+            .id(propId1)
+            .name("Finca 1")
+            .department("Meta")
+            .numberRooms(3)
+            .nightPrice(1200)
+            .pictures(new ArrayList<>()) 
+            .build();
+
+        UUID propId2 = UUID.randomUUID();
+        FileEntity fileEntity = FileEntity.builder()
+            .id(UUID.randomUUID())
+            .url("picture1.jpg")
+            .build();
+        List<FileEntity> pictures = new ArrayList<>();
+        pictures.add(fileEntity);
+        PropertyEntity property2 = PropertyEntity.builder()
+            .id(propId2)
+            .name("Finca 2")
+            .department("Meta")
+            .numberRooms(4)
+            .nightPrice(1500)
+            .pictures(pictures)
+            .build();
+
+        when(repo.findAllWithFilters(
+                any(), any(), any(), any(), any(), any(), eq(ownerId), eq(0), eq(10)
+        )).thenReturn(List.of(property1, property2));
+
+        when(ratingRepo.getPropertyRating(propId1, Roles.LANDLORD_ROLE)).thenReturn(4.5);
+        when(ratingRepo.getPropertyRating(propId2, Roles.LANDLORD_ROLE)).thenReturn(null);
+
+        List<PropertyTileDTO> result = controller.getMyProperties(auth, page);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+
+        PropertyTileDTO dto1 = result.get(0);
+        assertEquals(propId1, dto1.id());
+        assertEquals("Finca 1", dto1.name());
+        assertEquals("Meta", dto1.department());
+        assertEquals(staticImage, dto1.imageUrl());
+        assertEquals(3, dto1.nRooms());
+        assertEquals(12, dto1.nPeople()); // 3 rooms * 4 persons each
+        assertEquals(1200, dto1.price());
+        assertEquals(4.5, dto1.rating());
+
+        PropertyTileDTO dto2 = result.get(1);
+        assertEquals(propId2, dto2.id());
+        assertEquals("Finca 2", dto2.name());
+        assertEquals("Meta", dto2.department());
+        String expectedUrl = "http://localhost:9090" + "/api/v1/files/" + fileEntity.getUrl();
+        assertEquals(expectedUrl, dto2.imageUrl());
+        assertEquals(4, dto2.nRooms());
+        assertEquals(16, dto2.nPeople());
+        assertEquals(1500, dto2.price());
+        assertNull(dto2.rating());
+    }
+
+    @Test
+    void getMyProperties_EmptyList() {
+        UUID ownerId = UUID.randomUUID();
+        AuthDTO auth = new AuthDTO(ownerId, "LANDLORD");
+        int page = 1;
+        when(repo.findAllWithFilters(
+                any(), any(), any(), any(), any(), any(), eq(ownerId), eq(0), eq(10)
+        )).thenReturn(Collections.emptyList());
+
+        List<PropertyTileDTO> result = controller.getMyProperties(auth, page);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 }

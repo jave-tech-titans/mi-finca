@@ -1,5 +1,6 @@
 package com.techtitans.mifinca.transport.controllers;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,7 +27,7 @@ public class StorageController {
     }
 
     @GetMapping("/**")
-    public ResponseEntity<Resource> serveFile(HttpServletRequest request) throws Exception{
+    public ResponseEntity<Resource> serveFile(HttpServletRequest request) throws IOException{
         String fullPath = request.getRequestURI();
         String postfix = fullPath.replace("/api/v1/files/", "");
         Resource file = storageService.getFile(postfix);
