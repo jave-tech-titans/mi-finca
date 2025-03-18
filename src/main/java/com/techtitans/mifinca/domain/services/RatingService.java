@@ -27,7 +27,7 @@ public class RatingService {
         return repo.getPropertyRating(propertyId, Roles.LANDLORD_ROLE);
     }
 
-    public void addRating(ScheduleEntity sch, CreateRatingDTO dto, AuthDTO authDTO){
+    public RatingEntity addRating(ScheduleEntity sch, CreateRatingDTO dto, AuthDTO authDTO){
         //if the user has nothign to do with the schedule
         if(!authDTO.userId().equals(sch.getUser().getId()) && !authDTO.userId().equals(sch.getProperty().getOwner().getId())){
             throw new ApiException(ApiError.UNATHORIZED_TO_RATE);
@@ -50,6 +50,6 @@ public class RatingService {
             .scheduling(sch)
             .build();
         
-        repo.save(rating);
+        return repo.save(rating);
     }
 }

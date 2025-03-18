@@ -48,7 +48,6 @@ public class RentalController {
         return rentalService.getRentalRequests(page, authDTO);
     }
 
-    //pending to confirm if this is valid restful
     @PatchMapping("/{request-id}/accept")
     public void acceptRentalRequest(
         @PathVariable("request-id") UUID requestId, 
@@ -57,7 +56,6 @@ public class RentalController {
         rentalService.acceptRequest(requestId, authDTO);
     }
 
-    //pending to confirm if this is valid restful
     @PatchMapping("/{request-id}/deny")
     public void cancelRentalRequest(
         @PathVariable("request-id") UUID requestId, 

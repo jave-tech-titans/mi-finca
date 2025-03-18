@@ -1,6 +1,5 @@
 package com.techtitans.mifinca.transport.middlewares;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -13,8 +12,11 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class AuthMiddleware implements HandlerInterceptor{
 
-    @Autowired
     private AuthService authService;
+
+    public AuthMiddleware(AuthService authService){
+        this.authService = authService;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

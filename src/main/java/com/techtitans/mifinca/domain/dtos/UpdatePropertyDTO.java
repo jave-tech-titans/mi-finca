@@ -1,5 +1,8 @@
 package com.techtitans.mifinca.domain.dtos;
 
+import lombok.Builder;
+
+@Builder
 public record UpdatePropertyDTO (
     String name,
     String department,

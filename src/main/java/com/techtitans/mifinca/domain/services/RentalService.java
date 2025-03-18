@@ -110,6 +110,10 @@ public class RentalService {
     }
 
     public void createRentalRequest(UUID propertyId,CreateRentalRequestDTO dto, AuthDTO authDTO) {
+        //if user is  a landlord he cant do this
+        if(authDTO.role().equals(Roles.LANDLORD_ROLE)){
+            throw new ApiException(ApiError.UNATHORIZED_TO_REQUEST);
+        }
         if(dto.startDate() == null || dto.endDate() == null){
             throw new ApiException(ApiError.EMPTY_FIELDS);
         }
@@ -117,10 +121,6 @@ public class RentalService {
         //checking if the number of people is in the range
         if(!propertiesService.validatePropertyGuests(propertyId, dto.nGuests())){
             throw new ApiException(ApiError.INVALID_PARAMETERS);
-        }
-        //if user is  a landlord he cant do this
-        if(authDTO.role().equals(Roles.LANDLORD_ROLE)){
-            throw new ApiException(ApiError.UNATHORIZED_TO_REQUEST);
         }
         //check that the dates are correct
         if(dto.startDate().isBefore(LocalDate.now()) || dto.endDate().isBefore(dto.startDate())){
@@ -239,12 +239,13 @@ public class RentalService {
         //this method takes care of checking if the shcedule can be rated yet
         ScheduleEntity sch = getRentalRequestForRating(requestId);
         int nRates = sch.getRatings().size();
-        ratingService.addRating(sch, dto, authDTO);
+        var rating = ratingService.addRating(sch, dto, authDTO);
 
         //checking if with this rating both landlord and user have now rated the scheduling
         if(nRates == 1){
             sch.setScStatus(ScheduleStatus.RATED);
             repo.save(sch);
         }
+        sch.getRatings().add(rating);
     }
 }
