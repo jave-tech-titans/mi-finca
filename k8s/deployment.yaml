@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mifinca-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mifinca-app
+  template:
+    metadata:
+      labels:
+        app: mifinca-app
+    spec:
+      hostNetwork: true
+      containers:
+      - name: mifinca-cont
+        image: localhost:5000/mifinca-app:latest
+        ports:
+        - containerPort: 9091

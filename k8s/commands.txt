@@ -1,0 +1,23 @@
+sudo docker build -t mifinca-app:latest .
+sudo docker tag  mifinca-app:latest localhost:5000/mifinca-app:latest
+sudo docker push localhost:5000/mifinca-app:latest
+
+
+sudo microk8s kubectl apply -f k8s/deployment.yaml
+sudo microk8s kubectl apply -f k8s/service.yaml
+sudo microk8s kubectl apply -f k8s/ingress.yaml
+
+
+sudo microk8s kubectl delete -f k8s/deployment.yaml
+sudo microk8s kubectl delete -f k8s/service.yaml
+sudo microk8s kubectl delete -f k8s/ingress.yaml
+
+
+
+##to monitor
+microk8s kubectl get pods
+microk8s kubectl get deployments
+microk8s kubectl get svc
+microk8s kubectl get ingress
+microk8s kubectl describe deployment springboot-deployment
+microk8s kubectl logs <PODNAME>
