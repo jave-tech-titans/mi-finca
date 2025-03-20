@@ -16,5 +16,14 @@ spec:
       containers:
       - name: mifinca-cont
         image: localhost:5000/mifinca-app:latest
+        env:
+        - name: CRYPT_KEY
+          value: "asdfgcdetgfcfrtd"
+        - name: JWT_SECRET
+          value: "3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b"
+        - name: SENDGRID_EMAIL
+          value: "bermudezjimenezjuandiego@gmail.com"
+        - name: SENDGRID_API_KEY
+          value: "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"
         ports:
         - containerPort: 9091
