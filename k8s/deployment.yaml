@@ -19,3 +19,24 @@ spec:
         image: localhost:5000/mifinca-app:latest
         ports:
         - containerPort: 9091
+        env:
+        - name: CRYPT_KEY
+          valueFrom:
+            secretKeyRef:
+              name: finca-secrets
+              key: CRYPT_KEY
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: finca-secrets
+              key: JWT_SECRET
+        - name: SENDGRID_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: finca-secrets
+              key: SENDGRID_EMAIL
+        - name: SENDGRID_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: finca-secrets
+              key: SENDGRID_API_KEY
