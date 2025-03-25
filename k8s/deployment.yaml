@@ -16,6 +16,6 @@ spec:
       hostNetwork: true
       containers:
       - name: mifinca-cont
-        image: localhost:5000/mifinca-app:latestd
+        image: localhost:5000/mifinca-app:latest
         ports:
         - containerPort: 9091
