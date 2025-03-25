@@ -1,6 +1,7 @@
 package com.techtitans.mifinca.transport.middlewares;
 
 import java.time.LocalDateTime;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class ErrorsMiddleware {
 
 
     private void initCodesMap(){
-        errorCodesMapping = new HashMap<>();
+        errorCodesMapping = new EnumMap<>(ErrorType.class);
         errorCodesMapping.put(ErrorType.BAD_INPUT, HttpStatus.BAD_REQUEST);
         errorCodesMapping.put(ErrorType.UNATHORIZED, HttpStatus.UNAUTHORIZED);
         errorCodesMapping.put(ErrorType.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);

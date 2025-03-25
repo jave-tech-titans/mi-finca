@@ -15,9 +15,8 @@ sudo microk8s kubectl delete -f k8s/ingress.yaml
 
 
 ##to monitor
-microk8s kubectl get pods
-microk8s kubectl get deployments
-microk8s kubectl get svc
-microk8s kubectl get ingress
 microk8s kubectl describe deployment mifinca-app
 microk8s kubectl logs <PODNAME>
+
+
+mvn clean verify sonar:sonar

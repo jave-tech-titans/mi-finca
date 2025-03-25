@@ -41,7 +41,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthControllerTest {
+class AuthControllerTest {
 
     @Mock
     private AccountRepository accountRepository;
@@ -261,5 +261,18 @@ public class AuthControllerTest {
         ApiException ex = assertThrows(ApiException.class, () -> authController.refresh(body));
         assertEquals(ApiError.EXPIRED_TOKEN, ex.getError());
         verify(sessionRepository).deleteById(session.getId());
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                     SEND EMAIL TEST                                                               /////////////////////////
+    
+    @Test
+    void sendConfirmationEmail_Success() {
+        EmailService service = new EmailService("TEST_KEY", "emai@gmail.com", "finca.com");
+
+        assertDoesNotThrow(()->service.sendConfirmEmail("clien@gmail.com", "ASSSSEEEWEWRETREDFDFDGRREER"));
     }
 }

@@ -70,12 +70,16 @@ public class PropertiesService {
                ObjectMapper mapper = new ObjectMapper();
 
                List<JsonNode> nodeList = mapper.readValue(response.body(), new TypeReference<List<JsonNode>>() {});
-               return nodeList.stream().map((node)->node.get("name").toString().trim().replace("\"", "")).collect(Collectors.toSet());
+               return nodeList.stream().map(node->node.get("name").toString().trim().replace("\"", "")).collect(Collectors.toSet());
             } else {
                 return new HashSet<>();
             }
-        } catch (Exception e) {
-           return new HashSet<>();
+        }catch(InterruptedException e){
+            Thread.currentThread().interrupt(); 
+            return new HashSet<>();
+        } 
+        catch (Exception e) {
+            return new HashSet<>();
         }
     }
 
@@ -125,7 +129,8 @@ public class PropertiesService {
 
     //method to retrieve properties
     public List<PropertyTileDTO> getProperties(PropertySearchFilter filter){
-        Integer minRooms = null, maxRooms=null;
+        Integer minRooms = null;
+        Integer maxRooms=null;
         if(filter.nPeople() != null){
             maxRooms = filter.nPeople()/2;    //we are saying that at much we will leave only 2 persons per room, not less
             minRooms = filter.nPeople()/4; //we are saying that at much we will fit 4 persons per room, not more
@@ -234,10 +239,7 @@ public class PropertiesService {
         if(prop == null){
             throw new ApiException(ApiError.PROPERTY_NOT_FOUND);
         }
-        if(nPeople < prop.getNumberRooms()*2 || nPeople > prop.getNumberRooms()*4){
-            return false ;
-        }
-        return true;
+        return nPeople < prop.getNumberRooms()*2 || nPeople > prop.getNumberRooms()*4;
     }
 
     //to obtain the price for n amount of nights

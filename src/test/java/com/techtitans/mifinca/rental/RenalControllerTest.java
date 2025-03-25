@@ -55,7 +55,7 @@ import com.techtitans.mifinca.transport.controllers.RentalController;
 import io.jsonwebtoken.lang.Collections;
 
 @ExtendWith(MockitoExtension.class)
-public class RenalControllerTest {
+class RenalControllerTest {
     @Mock
     private ScheduleRepository scheduleRepository;
     @Mock
@@ -392,9 +392,13 @@ public class RenalControllerTest {
         UUID requestId = UUID.randomUUID();
         when(scheduleRepository.findById(requestId)).thenReturn(Optional.empty());
 
-        ApiException ex = assertThrows(ApiException.class, 
-            () -> rentalController.acceptRentalRequest(requestId, new AuthDTO(UUID.randomUUID(), "LANDLORD"))
+        UUID userId = UUID.randomUUID();
+        AuthDTO auth = new AuthDTO(userId, "LANDLORD");
+        
+        ApiException ex = assertThrows(ApiException.class, () -> 
+            rentalController.acceptRentalRequest(requestId, auth)
         );
+        
         assertEquals(ApiError.REQUEST_NOT_FOUND, ex.getError());
 
         verify(scheduleRepository, never()).save(any(ScheduleEntity.class));
@@ -457,8 +461,10 @@ public class RenalControllerTest {
     void cancelRentalRequest_RequestNotFound() {
         UUID requestId = UUID.randomUUID();
         when(scheduleRepository.findById(requestId)).thenReturn(Optional.empty());
+        UUID userId = UUID.randomUUID();
+        AuthDTO auth = new AuthDTO(userId ,"LANDLORD");
         ApiException ex = assertThrows(ApiException.class,
-            () -> rentalController.cancelRentalRequest(requestId, new AuthDTO(UUID.randomUUID(), "LANDLORD"))
+            () -> rentalController.cancelRentalRequest(requestId, auth)
         );
         assertEquals(ApiError.REQUEST_NOT_FOUND, ex.getError());
         verify(scheduleRepository, never()).save(any(ScheduleEntity.class));

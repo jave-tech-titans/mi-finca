@@ -50,7 +50,7 @@ public class PaymentService {
             .value(schedule.getPrice())
             .build()
         );
-        rentalService.UpdatePaidRentalRequest(requestId);
+        rentalService.updatePaidRentalRequest(requestId);
     }
     
 }

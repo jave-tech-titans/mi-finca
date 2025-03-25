@@ -42,7 +42,7 @@ import com.techtitans.mifinca.repository.ScheduleRepository;
 import com.techtitans.mifinca.transport.controllers.PaymentController;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentControllerTest {
+class PaymentControllerTest {
 
     @Mock
     private PaymentRepository paymentRepository;
@@ -96,13 +96,13 @@ public class PaymentControllerTest {
             .build();
 
         when(scheduleRepository.findById(requestId)).thenReturn(Optional.of(schedule));
-        doNothing().when(rentalServiceSpy).UpdatePaidRentalRequest(requestId);
+        doNothing().when(rentalServiceSpy).updatePaidRentalRequest(requestId);
         CreatePaymentDTO paymentDTO = new CreatePaymentDTO("Bancolombia", 1234567890L);
         AuthDTO auth = new AuthDTO(scheduleUserId, "USER");
         when(paymentRepository.save(any(PaymentEntity.class))).thenAnswer(inv -> inv.getArgument(0));
         assertDoesNotThrow(() -> paymentController.paySchedule(requestId, paymentDTO, auth));
         verify(paymentRepository, times(1)).save(any(PaymentEntity.class));
-        verify(rentalServiceSpy, times(1)).UpdatePaidRentalRequest(requestId);
+        verify(rentalServiceSpy, times(1)).updatePaidRentalRequest(requestId);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class PaymentControllerTest {
         );
         assertEquals(ApiError.USER_IS_NOT_THE_REQUEST_ONE, ex.getError());
         verify(paymentRepository, never()).save(any());
-        verify(rentalServiceSpy, never()).UpdatePaidRentalRequest(any());
+        verify(rentalServiceSpy, never()).updatePaidRentalRequest(any());
     }
 
     @Test
@@ -158,7 +158,7 @@ public class PaymentControllerTest {
         );
         assertEquals(ApiError.INVALID_PARAMETERS, ex2.getError());
         verify(paymentRepository, never()).save(any());
-        verify(rentalServiceSpy, never()).UpdatePaidRentalRequest(any());
+        verify(rentalServiceSpy, never()).updatePaidRentalRequest(any());
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

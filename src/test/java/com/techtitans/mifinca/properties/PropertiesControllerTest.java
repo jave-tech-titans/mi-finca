@@ -48,7 +48,7 @@ import com.techtitans.mifinca.repository.RatingRepository;
 import com.techtitans.mifinca.transport.controllers.PropertiesController;
 
 @ExtendWith(MockitoExtension.class)
-public class PropertiesControllerTest {
+class PropertiesControllerTest {
 
     @Mock
     private PropertyRepository repo;
@@ -396,7 +396,7 @@ public class PropertiesControllerTest {
     }
 
     @Test
-    void uploadPicture_Unauthorized() throws Exception {
+    void uploadPicture_Unauthorized(){
         UUID propId = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
         PropertyEntity property = PropertyEntity.builder()

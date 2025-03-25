@@ -228,7 +228,7 @@ public class RentalService {
         return schedule;
     }
 
-    public void UpdatePaidRentalRequest(UUID scheduleId){
+    public void updatePaidRentalRequest(UUID scheduleId){
         ScheduleEntity sch = getRentalRequestForPayment(scheduleId);
         sch.setScStatus(ScheduleStatus.PAID);
         repo.save(sch);

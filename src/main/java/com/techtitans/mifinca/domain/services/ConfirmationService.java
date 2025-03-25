@@ -12,8 +12,8 @@ import com.techtitans.mifinca.repository.ConfirmationRepository;
 @Service
 public class ConfirmationService {
 
-    public ConfirmationRepository repo;
-    public EmailService emailService;
+    private ConfirmationRepository repo;
+    private EmailService emailService;
 
     public ConfirmationService(
         ConfirmationRepository repo,

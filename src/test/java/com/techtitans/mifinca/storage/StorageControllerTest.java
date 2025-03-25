@@ -30,7 +30,7 @@ import com.techtitans.mifinca.transport.controllers.StorageController;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ExtendWith(MockitoExtension.class)
-public class StorageControllerTest {
+class StorageControllerTest {
     
     private StorageService storageService;
     private StorageController storageController;

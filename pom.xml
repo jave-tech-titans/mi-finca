@@ -29,14 +29,13 @@
 	<properties>
 		<java.version>17</java.version>
 		<sonar.host.url>http://localhost:9000</sonar.host.url>
-		<sonar.login>sqp_cc8aa80b3419baa1b6d41e59aad4099d4c44229b</sonar.login>
+		<sonar.token>sqp_cc8aa80b3419baa1b6d41e59aad4099d4c44229b</sonar.token>
 		<sonar.projectKey>finca-tests</sonar.projectKey> 
 		<sonar.projectName>'finca-test'</sonar.projectName>
 		<sonar.projectVersion>1.0</sonar.projectVersion>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 	<dependencies>
-		
 		<dependency>
     		<groupId>io.github.cdimascio</groupId>
     		<artifactId>dotenv-java</artifactId>
@@ -95,6 +94,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-inline</artifactId>
+			<version>5.2.0</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -102,6 +108,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.14.0</version>
 				<configuration>
 					<annotationProcessorPaths>
 						<path>
@@ -126,26 +133,32 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.7.0.1746</version>
+				<version>5.0.0.4389</version>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.8</version>
+				<version>0.8.12</version>
 				<executions>
 					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
+					<goals>
+						<goal>prepare-agent</goal>
+					</goals>
 					</execution>
 					<execution>
-						<id>report</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
+					<id>report</id>
+					<phase>prepare-package</phase>
+					<goals>
+						<goal>report</goal>
+					</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<excludes>
+					<exclude>**/*$MockitoMock$*</exclude>
+					<exclude>**/*$auxiliary$*</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

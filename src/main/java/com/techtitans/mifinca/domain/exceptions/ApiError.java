@@ -29,12 +29,20 @@ public enum ApiError {
     ALREADY_RATED("ALREADY_RATED", ErrorType.BAD_INPUT)
     ;
 
-    public String message;
-    public ErrorType type;
+    private String message;
+    private ErrorType type;
 
 
     ApiError(String message, ErrorType type){
         this.message = message;
         this.type = type;
+    }
+
+    public String getMessage(){
+        return message;
+    }
+
+    public ErrorType getType(){
+        return type;
     }
 }

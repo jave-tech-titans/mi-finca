@@ -25,7 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthMiddlewareTest {
+class AuthMiddlewareTest {
 
     private AuthMiddleware authMiddleware;
     private AuthService authService = mock(AuthService.class);
@@ -38,7 +38,7 @@ public class AuthMiddlewareTest {
     }
 
     @Test
-    void preHandle_MissingAuthorizationHeader() throws Exception {
+    void preHandle_MissingAuthorizationHeader(){
         when(request.getHeader("Authorization")).thenReturn(null);
         boolean result = authMiddleware.preHandle(request, response, new Object());
         assertFalse(result);
@@ -47,7 +47,7 @@ public class AuthMiddlewareTest {
     }
 
     @Test
-    void preHandle_InvalidAuthorizationHeader() throws Exception {
+    void preHandle_InvalidAuthorizationHeader() {
         when(request.getHeader("Authorization")).thenReturn("Token abcdef");
         boolean result = authMiddleware.preHandle(request, response, new Object());
         assertFalse(result);
@@ -56,7 +56,7 @@ public class AuthMiddlewareTest {
     }
 
     @Test
-    void preHandle_ValidAuthorizationHeader() throws Exception {
+    void preHandle_ValidAuthorizationHeader(){
         String token = "valid-token";
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
         AuthDTO dummyAuth = new AuthDTO(UUID.randomUUID(), "USER");

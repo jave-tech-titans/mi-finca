@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: finca-ingress
+  namespace: finca
 spec: 
   rules:
   - host: finca.javeriana.co
