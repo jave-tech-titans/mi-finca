@@ -15,6 +15,19 @@ public class WebConfig implements WebMvcConfigurer {
         this.authMiddleware = authMiddleware;
     }
 
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**") 
+                        .allowedOrigins("*") 
+                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                        .allowedHeaders("*");
+            }
+        };
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         //here we suscribe the endpoints with the middleware
