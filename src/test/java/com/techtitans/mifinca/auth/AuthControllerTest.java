@@ -100,7 +100,7 @@ class AuthControllerTest {
 
 
     @Test
-    public void createAccount_Success() {
+    void createAccount_Success() {
         when(accountRepository.findByEmail(validDto.email())).thenReturn(java.util.Optional.empty());
         when(accountRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -109,13 +109,13 @@ class AuthControllerTest {
     }
 
     @Test
-    public void createAccount_InvalidEmail() {
+    void createAccount_InvalidEmail() {
         ApiException exception = assertThrows(ApiException.class, () -> authController.createAccount(invalidEmailDto));
         assertEquals(ApiError.INVALID_EMAIL, exception.getError());
     }
 
     @Test
-    public void createAccount_ShortPassword() {
+    void createAccount_ShortPassword() {
         ApiException exception = assertThrows(ApiException.class, () -> authController.createAccount(shortPasswordDto));
         assertEquals(ApiError.PASSWORD_TO_SHORT, exception.getError());
     }
@@ -128,7 +128,7 @@ class AuthControllerTest {
     ////////                     LOGIN TESTS                                                   ////////////////////////////////////////
     
     @Test 
-    public void login_Success(){
+    void login_Success(){
         when(accountRepository.findByEmail(validDto.email())).thenReturn(Optional.of(validEntity));
         when(sessionRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -138,7 +138,7 @@ class AuthControllerTest {
     }
     
     @Test 
-    public void login_InvalidPassword(){
+    void login_InvalidPassword(){
         when(accountRepository.findByEmail(validDto.email())).thenReturn(Optional.of(validEntity));
         LoginDTO inputDTO = new LoginDTO(validDto.email(), "invalid password");
         ApiException ex = assertThrows(ApiException.class, ()->authController.login(inputDTO));

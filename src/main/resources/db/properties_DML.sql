@@ -60,11 +60,11 @@ BEGIN
         id, email, names, last_names, number,
         is_active, role, status, created_at, updated_at, hash
     ) VALUES
-        (landlord_1, 'landlord1@gmail.com', 'land 1', 'lord', '1234567891', true, 'LANDLORD', 0, NOW(), NOW(), 'WlcB5u4PYsRZxFsskEdg4A=='),
-        (landlord_2, 'landlord2@gmail.com', 'land 2', 'lord', '1234567891', true, 'LANDLORD', 0, NOW(), NOW(), 'WlcB5u4PYsRZxFsskEdg4A=='),
-        (landlord_3, 'landlord3@gmail.com', 'land 3', 'lord', '1234567891', true, 'LANDLORD', 0, NOW(), NOW(), 'WlcB5u4PYsRZxFsskEdg4A=='),
-        (user_1, 'user1@gmail.com', 'user 1', 'xd', '1234567891', true, 'USER', 0, NOW(), NOW(), 'WlcB5u4PYsRZxFsskEdg4A=='),
-        (user_2, 'user2@gmail.com', 'user 2', 'xd', '1234567891', true, 'USER', 0, NOW(), NOW(), 'WlcB5u4PYsRZxFsskEdg4A==');
+        (landlord_1, 'landlord1@gmail.com', 'land 1', 'lord', '1234567891', true, 'LANDLORD', 0, NOW(), NOW(), 'RSj+mhHMWvGAjb3dO45C0w=='),
+        (landlord_2, 'landlord2@gmail.com', 'land 2', 'lord', '1234567891', true, 'LANDLORD', 0, NOW(), NOW(), 'RSj+mhHMWvGAjb3dO45C0w=='),
+        (landlord_3, 'landlord3@gmail.com', 'land 3', 'lord', '1234567891', true, 'LANDLORD', 0, NOW(), NOW(), 'RSj+mhHMWvGAjb3dO45C0w=='),
+        (user_1, 'user1@gmail.com', 'user 1', 'xd', '1234567891', true, 'USER', 0, NOW(), NOW(), 'RSj+mhHMWvGAjb3dO45C0w=='),
+        (user_2, 'user2@gmail.com', 'user 2', 'xd', '1234567891', true, 'USER', 0, NOW(), NOW(), 'RSj+mhHMWvGAjb3dO45C0w==');
 
 
     --INSERT PROPERTIES
@@ -120,10 +120,10 @@ BEGIN
 
     --INSERT PAYMENTS
     INSERT INTO payments(
-        id, account_number, bank, value ,schedule_id ,created_at
+        id, account_number, bank, value ,schedule_id ,created_at, status
     )VALUES
-        (gen_random_uuid(), 1165454, 'Bancolombia', 14220,sch_1, NOW()),
-        (gen_random_uuid(), 2500303, 'Davivienda', 471100,sch_2, NOW());
+        (gen_random_uuid(), 1165454, 'Bancolombia', 14220,sch_1, NOW(), 0),
+        (gen_random_uuid(), 2500303, 'Davivienda', 471100,sch_2, NOW(), 0);
 
     --INSERT RATINGS
     INSERT INTO ratings(

@@ -92,7 +92,7 @@ public class AccountService {
             throw new ApiException(ApiError.NON_EXISTING_ACCOUNT);
         }
 
-        AccountEntity account  = repo.findById(conf.getAccount().getId()).orElseGet(null);
+        AccountEntity account  = repo.findById(conf.getAccount().getId()).orElse(null);
         if(account== null){
             throw new ApiException(ApiError.NON_EXISTING_ACCOUNT);
         }
@@ -109,7 +109,7 @@ public class AccountService {
 
     //method for the user to login into the account
     public AccessTokenDTO login(LoginDTO dto){
-        AccountEntity acc = repo.findByEmail(dto.email()).orElseGet(null);
+        AccountEntity acc = repo.findByEmail(dto.email()).orElse(null);
         if(acc == null || !acc.isActive()){
             throw new ApiException(ApiError.NON_EXISTING_ACCOUNT);
         }

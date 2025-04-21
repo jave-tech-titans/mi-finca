@@ -89,7 +89,7 @@ class PropertiesControllerTest {
     ///                     POST PROPERTY TEST                                                                  //////////////////////////
     
     @Test 
-    public void postProperty_Success(){
+    void postProperty_Success(){
         //mocking repo response
         when(repo.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         CreatePropertyDTO createPropertyDTO = new CreatePropertyDTO(
@@ -102,7 +102,7 @@ class PropertiesControllerTest {
     }
 
     @Test 
-    public void postProperty_NotOwner(){
+    void postProperty_NotOwner(){
         CreatePropertyDTO createPropertyDTO = new CreatePropertyDTO(
             "prueba", "Meta", "por la calle", 
             "es bonita", 6, 6, 
@@ -118,7 +118,7 @@ class PropertiesControllerTest {
     ///                     GET PROPERTIES TEST                                                                  //////////////////////////
     
     @Test 
-    public void getProperties_FilterSuccess(){
+    void getProperties_FilterSuccess(){
         //expected
         UUID[] ids = new UUID[]{UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID()};
         var expected = List.of(
@@ -151,7 +151,7 @@ class PropertiesControllerTest {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///                     GET PROPERTY TEST                                                                  //////////////////////////
     
-     @Test
+    @Test
     void getProperty_Success() {
         UUID propId = UUID.randomUUID();
         double mockRating = 4.5;

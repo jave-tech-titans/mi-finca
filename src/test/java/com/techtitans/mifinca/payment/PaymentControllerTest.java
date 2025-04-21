@@ -166,8 +166,8 @@ class PaymentControllerTest {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///                     GET BANKS TESTS                                                                      //////////////////////////
 
-     @Test
-    public void getBanks_Success() {
+    @Test
+    void getBanks_Success() {
 
         var result = paymentController.getBanks();
         assertTrue(result.contains("Bancolombia"));

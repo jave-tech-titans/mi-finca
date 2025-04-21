@@ -19,7 +19,7 @@ import com.techtitans.mifinca.domain.exceptions.ApiException;
 import com.techtitans.mifinca.transport.middlewares.ErrorsMiddleware;
 
 @ExtendWith(MockitoExtension.class)
-public class ErrorsMiddlewareTest {
+class ErrorsMiddlewareTest {
 
     private ErrorsMiddleware middleware;
 
