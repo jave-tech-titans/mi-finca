@@ -87,7 +87,11 @@ public class PropertiesController {
     }
 
     @PutMapping("/{property-id}")
-    public void updateProperty(@PathVariable("property-id") UUID propertyId, @RequestBody UpdatePropertyDTO body, @RequestAttribute("auth") AuthDTO authDTO) {
+    public void updateProperty(
+        @PathVariable("property-id") UUID propertyId, 
+        @RequestBody UpdatePropertyDTO body, 
+        @RequestAttribute("auth") AuthDTO authDTO
+    ) {
         service.updateProperty(propertyId, body, authDTO);
     }
 

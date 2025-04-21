@@ -55,7 +55,7 @@ public class AuthService {
         repo.save(session);
 
         String jwtAccess = buildJWTToken(account);
-        return new AccessTokenDTO(jwtAccess, sesionToken.toString());
+        return new AccessTokenDTO(jwtAccess, sesionToken.toString(), account.getRole());
     }
 
     public AuthDTO extractJWTPayload(String token){
@@ -83,6 +83,7 @@ public class AuthService {
         if(session == null){
             throw new ApiException(ApiError.INVALID_TOKEN);
         }
+        AccountEntity user = session.getUser();
 
         //f refresh token already expired
         if(session.getExpiresAt().isBefore(LocalDateTime.now())){
@@ -91,7 +92,7 @@ public class AuthService {
         }
         //if everything was fine then we simply create thenew access token
         String accessToken = buildJWTToken(session.getUser());
-        return new AccessTokenDTO(accessToken, session.getToken().toString());
+        return new AccessTokenDTO(accessToken, session.getToken().toString(), user.getRole());
     }
 
     private String buildJWTToken(AccountEntity account){

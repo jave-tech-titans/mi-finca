@@ -1,5 +1,18 @@
 package com.techtitans.mifinca.transport.controllers;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.dtos.CreateRatingDTO;
 import com.techtitans.mifinca.domain.dtos.CreateRentalRequestDTO;
@@ -8,10 +21,6 @@ import com.techtitans.mifinca.domain.dtos.RentalRequestDTO;
 import com.techtitans.mifinca.domain.dtos.ScheduleDTO;
 import com.techtitans.mifinca.domain.filters.SchedulesSearchFilter;
 import com.techtitans.mifinca.domain.services.RentalService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/rental")
@@ -74,7 +83,7 @@ public class RentalController {
     }
 
     @PostMapping("/requests/{request-id}/ratings")
-    public void rateTenant(
+    public void createRating(
         @PathVariable("request-id") UUID requestId,
         @RequestBody CreateRatingDTO body,
         @RequestAttribute("auth") AuthDTO authDTO
