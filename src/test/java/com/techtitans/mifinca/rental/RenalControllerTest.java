@@ -1,19 +1,5 @@
 package com.techtitans.mifinca.rental;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,11 +7,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
@@ -594,7 +593,7 @@ class RenalControllerTest {
         when(ratingRepository.save(any(RatingEntity.class))).thenAnswer(inv -> inv.getArgument(0));
         CreateRatingDTO dto = new CreateRatingDTO(5, "Great experience!");
 
-        assertDoesNotThrow(() -> rentalController.rateTenant(scheduleId, dto, auth));
+        assertDoesNotThrow(() -> rentalController.createRating(scheduleId, dto, auth));
         assertEquals(1, schedule.getRatings().size());
         RatingEntity newRating = schedule.getRatings().get(0);
         assertEquals("Great experience!", newRating.getComment());
@@ -629,7 +628,7 @@ class RenalControllerTest {
         when(ratingRepository.save(any(RatingEntity.class))).thenAnswer(inv -> inv.getArgument(0));
         when(scheduleRepository.save(any(ScheduleEntity.class))).thenAnswer(inv -> inv.getArgument(0));
         CreateRatingDTO dto = new CreateRatingDTO(4, "User was nice.");
-        assertDoesNotThrow(() -> rentalController.rateTenant(scheduleId, dto, auth));
+        assertDoesNotThrow(() -> rentalController.createRating(scheduleId, dto, auth));
         assertEquals(2, schedule.getRatings().size());
         assertEquals(ScheduleStatus.RATED, schedule.getScStatus());
     }
@@ -648,7 +647,7 @@ class RenalControllerTest {
         when(scheduleRepository.findById(scheduleId)).thenReturn(Optional.of(schedule));
         CreateRatingDTO dto = new CreateRatingDTO(3, "Not finished yet");
         ApiException ex = assertThrows(ApiException.class,
-            () -> rentalController.rateTenant(scheduleId, dto, auth)
+            () -> rentalController.createRating(scheduleId, dto, auth)
         );
         assertEquals(ApiError.CANT_RATE_YET, ex.getError());
         verify(ratingRepository, never()).save(any());
