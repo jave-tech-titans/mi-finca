@@ -140,7 +140,7 @@ public class PropertiesService {
             minRooms = filter.nRooms();
         }
         
-        int limit = 10;
+        int limit = 12;
         int offset = filter.page()*limit - limit;
         final var properties = repo.findAllWithFilters(
             filter.nameText(), 

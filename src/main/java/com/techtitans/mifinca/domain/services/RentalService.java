@@ -1,5 +1,14 @@
 package com.techtitans.mifinca.domain.services;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
 import com.techtitans.mifinca.domain.dtos.AuthDTO;
 import com.techtitans.mifinca.domain.dtos.CreateRatingDTO;
 import com.techtitans.mifinca.domain.dtos.CreateRentalRequestDTO;
@@ -15,15 +24,6 @@ import com.techtitans.mifinca.domain.exceptions.ApiError;
 import com.techtitans.mifinca.domain.exceptions.ApiException;
 import com.techtitans.mifinca.domain.filters.SchedulesSearchFilter;
 import com.techtitans.mifinca.repository.ScheduleRepository;
-
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 public class RentalService {
