@@ -12,7 +12,8 @@ import com.techtitans.mifinca.domain.entities.PropertyEntity;
 public interface PropertyRepository extends JpaRepository<PropertyEntity,UUID>{
     @Query(value = """
         SELECT * FROM properties p
-        WHERE (:name IS NULL OR p.name ILIKE '%' || :name || '%')
+        WHERE status = 0
+        AND (:name IS NULL OR p.name ILIKE '%' || :name || '%')
         AND (:department IS NULL OR p.department ILIKE '%' || :department || '%')
         AND (:minRooms IS NULL OR p.number_rooms >= :minRooms)
         AND (:maxRooms IS NULL OR p.number_rooms <= :maxRooms)

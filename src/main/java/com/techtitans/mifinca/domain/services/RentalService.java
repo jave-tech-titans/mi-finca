@@ -68,10 +68,12 @@ public class RentalService {
             String status = checkScheduleStatus(ent);
             //if the request is completed, it may be rated by 1 of themalready, we're going to check that
             if(status.equals(ScheduleStatus.COMPLETED)) status = checkIfRatedState(ent, Roles.USER_ROLE);
-            dtos.add(new RentalRequestDTO(
-                ent.getId(), ent.getProperty().getId(), ent.getProperty().getName(), 
-                ent.getStartDate(), ent.getEndDate(), status, ent.getCreatedAt(), ent.getPrice()
-            ));
+            if(ent.getProperty() != null){
+                dtos.add(new RentalRequestDTO(
+                    ent.getId(), ent.getProperty().getId(), ent.getProperty().getName(), 
+                    ent.getStartDate(), ent.getEndDate(), status, ent.getCreatedAt(), ent.getPrice()
+                ));
+            }
         }
         return dtos;
     }
@@ -88,11 +90,13 @@ public class RentalService {
         for(ScheduleEntity ent : schedules){
             String status = checkScheduleStatus(ent);
             if(status.equals(ScheduleStatus.COMPLETED)) status = checkIfRatedState(ent, Roles.USER_ROLE);
-            dtos.add(new OwnerRentaRequestDTO(
-                ent.getId(), ent.getProperty().getId(), ent.getUser().getId(),
-                ent.getUser().getNames(), ent.getProperty().getName(), ent.getStartDate(),
-                ent.getEndDate(), ent.getCreatedAt(), status, ent.getPrice()
-            ));
+            if(ent.getProperty() != null){
+                dtos.add(new OwnerRentaRequestDTO(
+                    ent.getId(), ent.getProperty().getId(), ent.getUser().getId(),
+                    ent.getUser().getNames(), ent.getProperty().getName(), ent.getStartDate(),
+                    ent.getEndDate(), ent.getCreatedAt(), status, ent.getPrice()
+                ));
+            }
         }
         return dtos;
     }
@@ -193,7 +197,7 @@ public class RentalService {
         if(ent.getRatings().size() == 0){
             return ScheduleStatus.COMPLETED;
         }
-        if(ent.getRatings().get(0).getType().equals(role)){
+        if(!ent.getRatings().get(0).getType().equals(role)){
             return ScheduleStatus.RATED;
         }
         return ScheduleStatus.COMPLETED;
