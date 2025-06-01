@@ -26,6 +26,7 @@ import com.techtitans.mifinca.domain.dtos.FullPropertyDTO;
 import com.techtitans.mifinca.domain.dtos.PropertyTileDTO;
 import com.techtitans.mifinca.domain.dtos.UpdatePropertyDTO;
 import com.techtitans.mifinca.domain.entities.AccountEntity;
+import com.techtitans.mifinca.domain.entities.FileEntity;
 import com.techtitans.mifinca.domain.entities.PropertyEntity;
 import com.techtitans.mifinca.domain.entities.Roles;
 import com.techtitans.mifinca.domain.exceptions.ApiError;
@@ -197,6 +198,11 @@ public class PropertiesService {
 
         Double rating = ratingService.getPropertyRating(prop.getId());
         List<String> picturesUrls = storageService.getPicturesOfProperty(propertyId);
+        if(picturesUrls.size()==0){
+            picturesUrls.add("https://img.lalr.co/cms/2015/07/09125750/finca_0.jpg");
+            picturesUrls.add("https://turismoencasasyfincas.com/images/CAL804.webp");
+            picturesUrls.add("https://medellinliving.com/wp-content/uploads/2016/11/medellin-real-estate-investment-casacol-01.jpg");
+        }
         return new FullPropertyDTO(
             prop.getId(), prop.getName(), prop.getDepartment(), prop.getDescription(), 
             prop.getEnterType(), prop.isHasAsador(), prop.isHasPool(), prop.isPetFriendly(), prop.getNumberBathrooms(),

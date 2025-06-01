@@ -20,6 +20,10 @@ public class AuthMiddleware implements HandlerInterceptor{
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return true;
+        }
         String authHeader = request.getHeader("Authorization");
         //validating that theres a bearer token in the request
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
